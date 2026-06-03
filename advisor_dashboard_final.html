@@ -1,0 +1,760 @@
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Outfit',system-ui,-apple-system,sans-serif}
+:root{
+  --bg:#f8f9fc;--card:#fff;--bdr:#eaedf3;
+  --top:#150e28;--top2:#150e28;--top3:#2d234a;
+  --txt:#111827;--mut:#6b7280;--hnt:#9ca3af;
+  --red:#ef4444;--redl:#fef2f2;--redb:#fca5a5;
+  --amb:#f59e0b;--ambl:#fffbeb;--ambb:#FAC775;
+  --grn:#10b981;--grnl:#ecfdf5;--grnb:#9FE1CB;
+  --blu:#5544d4;--blul:#f2efff;--blub:#c4b5fd;
+  --steel:#6b7280;--steell:#f3f4f6
+}
+.shell{background:var(--bg);border-radius:24px;border:1px solid var(--bdr);width:100%;max-width:460px;margin:0 auto;height:700px;display:flex;flex-direction:column;overflow:hidden;position:relative;box-shadow:0 12px 32px rgba(0,0,0,0.06)}
+
+/* TOP BAR */
+.topbar{background:var(--top);padding:16px 16px 12px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tb-av{width:34px;height:34px;border-radius:9px;background:var(--top3);border:.5px solid #4a3e75;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#c4b5fd;flex-shrink:0}
+.tb-name{font-size:16px;font-weight:600;color:#fff;line-height:1.2}
+.tb-meta{font-size:11px;color:#8f87b3;margin-top:2px}
+.ap{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1)}
+.ad{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* STAT STRIP */
+.stat-strip{background:var(--top2);padding:10px 14px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.sc{background:rgba(255,255,255,0.03);border-radius:12px;border:1px solid rgba(255,255,255,0.08);padding:10px 6px 8px;text-align:center;cursor:pointer;transition:background .15s}
+.sc:hover{background:rgba(255,255,255,0.08)}
+.sc-bar{height:3px;border-radius:2px 2px 0 0;margin:-10px -6px 8px}
+.sv{font-size:20px;font-weight:600;line-height:1}
+.sl{font-size:9px;color:#8f87b3;text-transform:uppercase;letter-spacing:.05em;margin-top:4px;font-weight:600}
+
+/* NAV TABS */
+.nav-tabs{background:var(--card);border-bottom:.5px solid var(--bdr);display:flex;flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nt{flex-shrink:0;padding:9px 14px;font-size:11px;font-weight:500;color:var(--hnt);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.nt.active{color:var(--blu);border-bottom-color:var(--blu)}
+.nt-pip{width:15px;height:15px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:#fff}
+
+/* PANELS */
+.panels{flex:1;overflow:hidden;position:relative}
+.panel{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden}
+.panel.active{display:flex}
+.pb{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:none}
+.pb::-webkit-scrollbar{display:none}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:16px;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.02)}
+.ch{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--bdr)}
+.ct{font-size:13px;font-weight:600;color:var(--txt)}
+.cm{font-size:11px;color:var(--hnt);margin-top:2px}
+.cl{font-size:11px;color:var(--blu);cursor:pointer;font-weight:600;white-space:nowrap;margin-left:8px}
+
+/* STUDENT ROWS */
+.sr{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;cursor:pointer;transition:background .12s;margin:0 -2px}
+.sr:hover{background:#f8fafc}
+.sr.pin-r{border-left:2px solid var(--red);border-radius:0 9px 9px 0;padding-left:8px}
+.sr.pin-a{border-left:2px solid var(--amb);border-radius:0 9px 9px 0;padding-left:8px}
+.av{border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0}
+.sn{font-size:12px;font-weight:500;color:var(--txt)}
+.sr-sub{font-size:10px;color:var(--hnt);margin-top:1px}
+.sr-reason{font-size:11px;color:var(--mut);margin-top:2px;line-height:1.3}
+.rnum{font-size:15px;font-weight:500;flex-shrink:0;width:24px;text-align:right}
+
+/* BUTTONS */
+.btn-d{padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;background:var(--redl);color:var(--red);border:1px solid var(--redb);cursor:pointer;white-space:nowrap;transition:background .12s}
+.btn-d:hover{background:#fee2e2}
+.btn-g{padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;color:var(--steel);border:1px solid var(--bdr);background:transparent;cursor:pointer;transition:background .12s;white-space:nowrap}
+.btn-g:hover{background:var(--steell)}
+.btn-p{padding:7px 16px;border-radius:8px;font-size:11px;font-weight:600;background:var(--top);color:#fff;border:none;cursor:pointer;transition:background .12s;white-space:nowrap}
+.btn-p:hover{background:var(--top3)}
+.btn-blu{padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;background:var(--blul);color:var(--blu);border:1px solid var(--blub);cursor:pointer;white-space:nowrap}
+
+/* PILLS & BADGES */
+.rbadge{font-size:10px;padding:3px 8px;border-radius:6px;font-weight:600}
+.pill{display:inline-block;font-size:10px;padding:3px 10px;border-radius:12px;font-weight:600}
+.flag-chip{font-size:10px;padding:3px 8px;border-radius:6px;font-weight:600;font-family:var(--font-sans);background:var(--steell);color:var(--steel);border:1px solid var(--bdr)}
+.sc-chip{font-size:10px;padding:3px 10px;border-radius:12px;font-weight:600;white-space:nowrap;flex-shrink:0}
+
+/* CONTEST CARD */
+.cc{background:#f8f9fc;border:1px solid var(--bdr);border-radius:12px;padding:14px;margin-bottom:10px}
+.cc:last-child{margin-bottom:0}
+.bq{border-left:2px solid var(--blub);padding:8px 12px;background:#fff;border-radius:0 8px 8px 0;margin:10px 0 12px}
+.bq-t{font-size:12px;color:var(--mut);font-style:italic;line-height:1.6}
+
+/* INTERVENTION ROWS */
+.ir{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:.5px solid #f8fafc}
+.ir:last-child{border-bottom:none}
+.il{width:2px;align-self:stretch;border-radius:2px;flex-shrink:0;margin-top:3px}
+.it{font-size:12px;font-weight:500;color:var(--txt)}
+.id{font-size:11px;color:var(--mut);margin-top:2px;line-height:1.4}
+
+/* STUDENT TABLE */
+.stbl{width:100%;border-collapse:collapse;font-size:11px}
+.stbl th{font-size:9px;color:var(--hnt);text-transform:uppercase;letter-spacing:.06em;padding:8px;border-bottom:.5px solid var(--bdr);text-align:left;font-weight:500;position:sticky;top:0;background:var(--card);z-index:1}
+.stbl td{padding:8px 8px;border-bottom:.5px solid #f8fafc;vertical-align:middle}
+.stbl tr:last-child td{border-bottom:none}
+.stbl tr.pr td:first-child{border-left:2px solid var(--red);padding-left:6px}
+.stbl tr.pa td:first-child{border-left:2px solid var(--amb);padding-left:6px}
+.stbl tr:hover td{background:#fafbfc;cursor:pointer}
+.traj-u{color:var(--red);font-size:11px;font-weight:500}
+.traj-d{color:var(--grn);font-size:11px;font-weight:500}
+
+/* CHAT */
+.msg{max-width:78%;padding:8px 11px;font-size:11px;line-height:1.55;border-radius:10px}
+.msg.mine{background:var(--blul);color:#0C447C;border-radius:10px 10px 3px 10px;align-self:flex-end;border:.5px solid var(--blub)}
+.msg.theirs{background:#fff;color:var(--txt);border-radius:10px 10px 10px 3px;align-self:flex-start;border:.5px solid var(--bdr)}
+.msg-t{font-size:9px;color:var(--hnt);margin-top:3px}
+
+/* OVERLAY & DRAWER */
+.overlay{position:absolute;inset:0;background:rgba(10,15,25,.55);border-radius:16px;opacity:0;pointer-events:none;transition:opacity .22s;z-index:10}
+.overlay.open{opacity:1;pointer-events:all}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:86%;background:#fff;border-left:.5px solid var(--bdr);transform:translateX(100%);transition:transform .26s cubic-bezier(.4,0,.2,1);z-index:20;display:flex;flex-direction:column;border-radius:0 16px 16px 0}
+.drawer.open{transform:translateX(0)}
+.dh{background:var(--top);padding:13px 15px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;border-radius:0 16px 0 0}
+.dt{font-size:13px;font-weight:500;color:#e2e8f0}
+.ds{font-size:10px;color:#4a6278;margin-top:2px}
+.cbtn{width:26px;height:26px;border-radius:50%;background:var(--top3);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dbody{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:10px;scrollbar-width:none}
+.dbody::-webkit-scrollbar{display:none}
+.dc{background:#f9f8f5;border:.5px solid #e8e4dc;border-radius:11px;padding:11px 13px}
+.dct{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.09em;font-weight:500;margin-bottom:9px;padding-bottom:5px;border-bottom:.5px solid #e8e4dc}
+.drow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:.5px solid #f3f0e8}
+.drow:last-child{border-bottom:none}
+.dk{font-size:11px;color:#888}
+.dv{font-size:12px;font-weight:500;color:#222}
+
+/* BOTTOM NAV */
+.bot-nav{background:#fff;border-top:1px solid var(--bdr);padding:10px 6px 14px;display:flex;justify-content:space-around;flex-shrink:0}
+.bn{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:2px 5px;border-radius:8px;min-width:40px;position:relative;transition:all .2s ease}
+.bn.active .bnl{color:var(--blu);font-weight:600}
+.bn.active .bniw{background:var(--blul);color:var(--blu)}
+.bniw{padding:6px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .2s ease;color:var(--hnt)}
+.bnl{font-size:9px;color:var(--hnt);transition:color .12s;font-weight:500}
+.bn-pip{position:absolute;top:1px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid var(--card)}
+
+/* MISC */
+.textarea-styled{width:100%;min-height:72px;border:1px solid var(--bdr);border-radius:10px;padding:12px;font-size:12px;font-family:var(--font-sans);background:#fff;color:var(--txt);resize:none;outline:none;line-height:1.5}
+.textarea-styled:focus{border-color:var(--blub)}
+.input-styled{width:100%;padding:10px 12px;border:1px solid var(--bdr);border-radius:10px;font-size:12px;font-family:var(--font-sans);background:#fff;color:var(--txt);outline:none}
+.input-styled:focus{border-color:var(--blub)}
+.select-styled{width:100%;padding:7px 10px;border:.5px solid #e8e4dc;border-radius:8px;font-size:11px;font-family:var(--font-sans);background:#fff;color:#222;outline:none;cursor:pointer}
+.banner-contest{background:#FAEEDA;border:.5px solid #FAC775;border-radius:9px;padding:9px 12px;display:flex;align-items:center;gap:9px;margin-bottom:0;flex-shrink:0}
+</style>
+
+<div class="shell" id="shell">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="tb-av">PR</div>
+      <div>
+        <div class="tb-name">Dr. Priya Ramesh</div>
+        <div class="tb-meta">Class Advisor · CSE Section B · 48 students</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      <div class="ap red">
+        <div class="ad" style="background:#ef4444"></div><span style="color:#fca5a5">4 RED</span>
+      </div>
+      <div class="ap amb">
+        <div class="ad" style="background:#f59e0b"></div><span style="color:#fde68a">11 AMB</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="sc" onclick="goPage(0);switchTab(1)">
+      <div class="sc-bar" style="background:var(--red)"></div>
+      <div class="sv" style="color:var(--red)">4</div><div class="sl">Critical</div>
+    </div>
+    <div class="sc" onclick="goPage(0);switchTab(1)">
+      <div class="sc-bar" style="background:var(--amb)"></div>
+      <div class="sv" style="color:var(--amb)">11</div><div class="sl">At Risk</div>
+    </div>
+    <div class="sc" onclick="goPage(0);switchTab(0)">
+      <div class="sc-bar" style="background:var(--grn)"></div>
+      <div class="sv" style="color:var(--grn)">33</div><div class="sl">Stable</div>
+    </div>
+    <div class="sc" onclick="goPage(3)">
+      <div class="sc-bar" style="background:var(--steel)"></div>
+      <div class="sv" style="color:var(--steel)">3</div><div class="sl">Contests</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="nav-tabs" id="navTabs"></div>
+
+  <!-- PANELS -->
+  <div class="panels" id="panelsWrap"></div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bot-nav">
+    <div class="bn active" id="bn0" onclick="goPage(0)">
+      <div class="bniw"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></div>
+      <span class="bnl">Home</span>
+    </div>
+    <div class="bn" id="bn1" onclick="goPage(1)">
+      <div class="bniw"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div class="bn-pip"></div>
+      <span class="bnl">Students</span>
+    </div>
+    <div class="bn" id="bn2" onclick="goPage(2)">
+      <div class="bniw"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <span class="bnl">Intervene</span>
+    </div>
+    <div class="bn" id="bn3" onclick="goPage(3)">
+      <div class="bniw"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <span class="bnl">Contests</span>
+    </div>
+    <div class="bn" id="bn4" onclick="goPage(4)">
+      <div class="bniw"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <span class="bnl">Chat</span>
+    </div>
+    <div class="bn" id="bn5" onclick="goPage(5)">
+      <div class="bniw"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div>
+      <span class="bnl">Mentor</span>
+    </div>
+  </div>
+
+  <div class="overlay" id="ov" onclick="closeDrawer()"></div>
+  <div class="drawer" id="drw">
+    <div class="dh">
+      <div><div class="dt" id="drwT">Details</div><div class="ds" id="drwS"></div></div>
+      <button class="cbtn" onclick="closeDrawer()">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1L1 9" stroke="#93c5fd" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="dbody" id="drwB"></div>
+  </div>
+</div>
+
+<script>
+const S=[
+  {i:'RK',n:'Rahul Kumar',r:'22B-CS-041',ty:'Hosteller',risk:'RED',sc:78,tr:'+6',rs:'No sessions in 22 days',fl:['STUDY_NEGLECT'],ls:'22 days ago',bc:'#FCEBEB',tc:'#991b1b'},
+  {i:'SK',n:'Sneha Kapoor',r:'22B-CS-027',ty:'Day Scholar',risk:'RED',sc:82,tr:'+9',rs:'Absent 8 of last 10 days',fl:['LOW_ATTEND'],ls:'18 days ago',bc:'#FCEBEB',tc:'#991b1b'},
+  {i:'PM',n:'Priya Mehta',r:'22B-CS-018',ty:'Day Scholar',risk:'AMBER',sc:65,tr:'+3',rs:'LMS 0 logins in 14 days',fl:['LOW_LMS'],ls:'5 days ago',bc:'#FAEEDA',tc:'#92400e'},
+  {i:'AJ',n:'Arun Joshi',r:'22B-CS-033',ty:'Hosteller',risk:'AMBER',sc:58,tr:'-2',rs:'Marks dropped by 18 pts',fl:['LOW_MARKS'],ls:'3 days ago',bc:'#FAEEDA',tc:'#92400e'},
+  {i:'NK',n:'Neha Kumari',r:'22B-CS-011',ty:'Hosteller',risk:'GREEN',sc:28,tr:'-4',rs:'Stable',fl:[],ls:'Yesterday',bc:'#E1F5EE',tc:'#0F6E56'},
+  {i:'VS',n:'Vikram Singh',r:'22B-CS-055',ty:'Day Scholar',risk:'GREEN',sc:22,tr:'-3',rs:'Stable',fl:[],ls:'Today',bc:'#E1F5EE',tc:'#0F6E56'},
+];
+
+function avEl(init,bc,tc,sz=30){
+  return`<div class="av" style="width:${sz}px;height:${sz}px;background:${bc};color:${tc};font-size:${sz<=28?'9px':'10px'}">${init}</div>`;
+}
+function badge(risk,bc,tc){return`<span class="rbadge" style="background:${bc};color:${tc}">${risk}</span>`;}
+function stuRow(s,showIntervene=true){
+  const pin=s.risk==='RED'?'pin-r':s.risk==='AMBER'?'pin-a':'';
+  return`<div class="sr ${pin}" onclick="openStudentDrawer('${s.n}')">
+    ${avEl(s.i,s.bc,s.tc,30)}
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:5px">${badge(s.risk,s.bc,s.tc)}<span class="sn">${s.n}</span></div>
+      <div class="sr-sub">${s.r} · ${s.ty}</div>
+      <div class="sr-reason">${s.rs}</div>
+    </div>
+    <div class="rnum" style="color:${s.tc}">${s.sc}</div>
+    ${s.risk==='RED'&&showIntervene
+      ?`<button class="btn-d" onclick="event.stopPropagation();openDrawer('intervene','${s.n}')">Intervene</button>`
+      :`<button class="btn-g" onclick="event.stopPropagation();openStudentDrawer('${s.n}')">View</button>`}
+  </div>`;
+}
+
+const contests=[
+  {i:'RK',n:'Rahul Kumar',r:'22B-CS-041',sc:78,fl:'STUDY_NEGLECT',ago:'2h ago',note:'I had a family emergency and could not study for 3 weeks. I have now resumed sessions and will catch up with the syllabus.'},
+  {i:'PM',n:'Priya Mehta',r:'22B-CS-018',sc:65,fl:'LOW_LMS',ago:'5h ago',note:'The LMS portal was inaccessible from my hostel network for 10 days. I have raised a complaint with IT support.'},
+  {i:'SK',n:'Sneha Kapoor',r:'22B-CS-027',sc:82,fl:'LOW_ATTEND',ago:'1d ago',note:'I was admitted to the college medical center for 5 days. I have the discharge certificate ready to provide.'},
+];
+
+function contestCard(c){
+  return`<div class="cc">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        ${avEl(c.i,'#FCEBEB','#991b1b',32)}
+        <div>
+          <div style="font-size:12px;font-weight:500;color:var(--txt)">${c.n}</div>
+          <div style="font-size:10px;color:var(--hnt)">${c.r} · Risk ${c.sc} · ${c.ago}</div>
+        </div>
+      </div>
+      <span class="flag-chip">${c.fl}</span>
+    </div>
+    <div class="bq"><div class="bq-t">"${c.note}"</div></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn-p" style="flex:1;border-radius:7px" onclick="openDrawer('respond','${c.n}','${c.fl}','${c.note.substring(0,40)}...')">Respond</button>
+      <button class="btn-g" onclick="openStudentDrawer('${c.n}')">Profile</button>
+      <button class="btn-g">Escalate</button>
+    </div>
+  </div>`;
+}
+
+const PAGES=[
+{
+  title:'Dashboard',meta:'Home',
+  tabs:['Overview','Priority','Interventions'],
+  panels:[
+    /* Overview */
+    ()=>`
+      <div class="card">
+        <div class="ch">
+          <div><div class="ct">Priority students</div><div class="cm">Highest risk · action needed today</div></div>
+          <span class="cl" onclick="goPage(1)">All students →</span>
+        </div>
+        ${S.filter(s=>s.risk!=='GREEN').slice(0,3).map(s=>stuRow(s)).join('')}
+      </div>
+      <div class="card">
+        <div class="ch">
+          <div><div class="ct">Flag contests</div><div class="cm">3 pending · student responses waiting</div></div>
+          <span class="cl" onclick="goPage(3)">View all →</span>
+        </div>
+        ${contestCard(contests[0])}
+      </div>`,
+
+    /* Priority */
+    ()=>`
+      <div class="card">
+        <div class="ch"><div><div class="ct">RED — critical</div><div class="cm">4 students · immediate action required</div></div></div>
+        ${S.filter(s=>s.risk==='RED').map(s=>stuRow(s)).join('')}
+      </div>
+      <div class="card">
+        <div class="ch"><div><div class="ct">AMBER — at risk</div><div class="cm">11 students · monitor closely</div></div></div>
+        ${S.filter(s=>s.risk==='AMBER').map(s=>stuRow(s,false)).join('')}
+      </div>`,
+
+    /* Interventions */
+    ()=>`
+      <div class="card">
+        <div class="ch">
+          <div><div class="ct">Active interventions</div><div class="cm">3 active · 1 pending HoD approval</div></div>
+          <button class="btn-p" style="font-size:10px;padding:4px 10px;border-radius:6px" onclick="openDrawer('newInt','')">+ New</button>
+        </div>
+        ${[
+          ['RK','Rahul Kumar','Resume daily study sessions · target 1h/day','Sent to student','var(--red)','#FCEBEB','#991b1b','var(--grnl)','#0F6E56'],
+          ['PM','Priya Mehta','Complete 3 pending LMS modules before Friday','Pending HoD','var(--blu)','#FAEEDA','#92400e','var(--blul)','#0C447C'],
+          ['SK','Sneha Kapoor','Medical leave follow-up · 3 absences flagged','Monitoring','var(--steel)','#FCEBEB','#991b1b','var(--steell)','var(--steel)'],
+        ].map(i=>`<div class="ir">
+          <div class="il" style="background:${i[4]}"></div>
+          ${avEl(i[0],i[5],i[6],28)}
+          <div style="flex:1"><div class="it">${i[1]}</div><div class="id">${i[2]}</div></div>
+          <span class="sc-chip" style="background:${i[7]};color:${i[8]}">${i[3]}</span>
+        </div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Your mentor profile</div></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 11px;background:var(--steell);border-radius:9px">
+          <div style="width:38px;height:38px;border-radius:50%;background:var(--top);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#93c5fd;flex-shrink:0">PR</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+              <span style="font-size:12px;font-weight:500;color:var(--txt)">Dr. Priya Ramesh</span>
+              <span class="pill" style="background:#FAEEDA;color:#92400e">Staff</span>
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--grn)"></div>
+              <span style="font-size:10px;color:var(--grn)">Available</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:3px">
+              ${['Data Structures','Algorithms','System Design','Career Guidance'].map(t=>`<span style="font-size:9px;padding:2px 7px;border-radius:20px;background:#fff;color:var(--steel);border:.5px solid var(--bdr)">${t}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>`
+  ]
+},
+{
+  title:'My Students',meta:'48 students · Section B',
+  tabs:['All · 48','RED · 4','AMBER · 11','GREEN · 33'],
+  panels:[
+    ()=>buildTable('ALL'),()=>buildTable('RED'),()=>buildTable('AMBER'),()=>buildTable('GREEN')
+  ]
+},
+{
+  title:'Interventions',meta:'Active · Pending · Resolved',
+  tabs:['Active · 3','Pending HoD · 1','Resolved'],
+  panels:[
+    ()=>buildInterventions('active'),
+    ()=>buildInterventions('pending'),
+    ()=>buildInterventions('resolved')
+  ]
+},
+{
+  title:'Flag Contests',meta:'Student contest submissions',
+  tabs:['Pending · 3','Reviewed · 2'],
+  panels:[
+    ()=>`<div class="card">${contests.map(c=>contestCard(c)).join('')}</div>`,
+    ()=>`<div class="card">
+      <div class="ch"><div class="ct">Reviewed contests</div></div>
+      ${[['RK','Rahul Kumar','STUDY_NEGLECT','Mar 15'],['NK','Neha Kumari','LOW_ATTEND','Mar 10']].map(c=>`
+        <div class="sr">
+          ${avEl(c[0],'var(--steell)','var(--steel)',28)}
+          <div style="flex:1"><div class="sn">${c[1]}</div><div class="sr-sub">${c[2]} · ${c[3]}</div></div>
+          <span class="pill" style="background:var(--grnl);color:#0F6E56">Resolved</span>
+        </div>`).join('')}
+    </div>`
+  ]
+},
+{
+  title:'Parent Chat',meta:'Conversations scoped to students',
+  tabs:['Messages'],
+  panels:[()=>buildChat()]
+},
+{
+  title:'Find Mentor',meta:'Staff & peer mentors',
+  tabs:['Staff mentors','Peer mentors'],
+  panels:[()=>buildMentors('staff'),()=>buildMentors('peer')]
+}
+];
+
+function buildTable(filter){
+  const list=filter==='ALL'?S:S.filter(s=>s.risk===filter);
+  return`
+    <div style="background:var(--card);border:.5px solid var(--bdr);border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+      <div style="padding:9px 12px;border-bottom:.5px solid var(--bdr);display:flex;gap:7px;align-items:center">
+        <input class="input-styled" placeholder="Search name or reg…" style="flex:1"/>
+        <select class="select-styled" style="width:130px">
+          <option>Risk: High first</option><option>Name A–Z</option><option>Last session</option>
+        </select>
+      </div>
+      <div style="overflow-y:auto;flex:1;scrollbar-width:none">
+        <table class="stbl">
+          <thead><tr>
+            <th style="padding-left:12px">Student</th><th>Risk</th><th>Score</th><th>Trend</th><th>Last session</th><th>Action</th>
+          </tr></thead>
+          <tbody>
+            ${list.map(s=>`<tr class="${s.risk==='RED'?'pr':s.risk==='AMBER'?'pa':''}" onclick="openStudentDrawer('${s.n}')">
+              <td style="${s.risk==='RED'||s.risk==='AMBER'?'':'padding-left:12px'}">
+                <div style="display:flex;align-items:center;gap:7px">
+                  ${avEl(s.i,s.bc,s.tc,26)}
+                  <div><div style="font-size:11px;font-weight:500;color:var(--txt)">${s.n}</div><div style="font-size:9px;color:var(--hnt)">${s.r}</div></div>
+                </div>
+              </td>
+              <td>${badge(s.risk,s.bc,s.tc)}</td>
+              <td><span style="font-size:14px;font-weight:500;color:${s.tc}">${s.sc}</span></td>
+              <td><span class="${s.tr.startsWith('+')?'traj-u':'traj-d'}">${s.tr.startsWith('+')?'↑':'↓'} ${s.tr.replace(/[+-]/,'')}</span></td>
+              <td style="font-size:10px;color:var(--hnt)">${s.ls}</td>
+              <td>${s.risk==='RED'
+                ?`<button class="btn-d" onclick="event.stopPropagation();openDrawer('intervene','${s.n}')">Intervene</button>`
+                :`<button class="btn-g" onclick="event.stopPropagation();openStudentDrawer('${s.n}')">View</button>`}
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:8px 12px;border-top:.5px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;background:var(--card)">
+        <span style="font-size:10px;color:var(--hnt)">Showing ${list.length} of 48</span>
+        <div style="display:flex;gap:5px">
+          <button class="btn-g" style="font-size:10px;padding:3px 9px">← Prev</button>
+          <button class="btn-g" style="font-size:10px;padding:3px 9px">Next →</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function buildInterventions(type){
+  const data={
+    active:[
+      ['RK','Rahul Kumar','Resume daily study sessions · 1h/day minimum','Sent to student','var(--red)','#FCEBEB','#991b1b','var(--grnl)','#0F6E56'],
+      ['PM','Priya Mehta','Complete 3 LMS modules before end of week','Pending HoD','var(--blu)','#FAEEDA','#92400e','var(--blul)','#0C447C'],
+      ['SK','Sneha Kapoor','Medical leave follow-up · 3 unexplained absences','Monitoring','var(--steel)','#FCEBEB','#991b1b','var(--steell)','var(--steel)'],
+    ],
+    pending:[
+      ['PM','Priya Mehta','Complete 3 LMS modules before end of week','Pending HoD','var(--blu)','#FAEEDA','#92400e','var(--blul)','#0C447C'],
+    ],
+    resolved:[
+      ['NK','Neha Kumari','Resume attendance after 5 consecutive absences','Completed','var(--grn)','#E1F5EE','#0F6E56','var(--grnl)','#0F6E56'],
+    ]
+  };
+  return`
+    <div class="card">
+      <div class="ch">
+        <div><div class="ct">${type==='active'?'Active interventions':type==='pending'?'Pending HoD approval':'Resolved'}</div></div>
+        <button class="btn-p" style="font-size:10px;padding:4px 10px;border-radius:6px" onclick="openDrawer('newInt','')">+ New</button>
+      </div>
+      ${(data[type]||[]).map(i=>`<div class="ir">
+        <div class="il" style="background:${i[4]}"></div>
+        ${avEl(i[0],i[5],i[6],30)}
+        <div style="flex:1"><div class="it">${i[1]}</div><div class="id">${i[2]}</div></div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+          <span class="sc-chip" style="background:${i[7]};color:${i[8]}">${i[3]}</span>
+          <button class="btn-g" style="font-size:9px;padding:2px 8px" onclick="openStudentDrawer('${i[1]}')">Profile</button>
+        </div>
+      </div>`).join('')}
+    </div>`;
+}
+
+function buildChat(){
+  return`<div style="display:flex;height:100%;overflow:hidden">
+    <div style="width:130px;flex-shrink:0;border-right:.5px solid var(--bdr);display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:none">
+      ${[['MK','Mr. Kumar','Father of Rahul K','Score 78 · RED',2,true],['SP','Smt. Priya','Mother of Sneha K','Score 82 · RED',1,false],['RJ','Raj Joshi','Father of Arun J','Score 58 · AMB',0,false]].map(p=>`
+        <div onclick="this.parentElement.querySelectorAll('div').forEach(d=>d.style.background='');this.style.background='#f8fafc'" style="padding:9px 10px;border-bottom:.5px solid #f1f5f9;cursor:pointer;background:${p[5]?'#f8fafc':'transparent'};${p[5]?'border-left:2px solid var(--blu)':''}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            ${avEl(p[0],'var(--blul)','var(--blu)',24)}
+            ${p[4]>0?`<div style="width:15px;height:15px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500">${p[4]}</div>`:''}
+          </div>
+          <div style="font-size:10px;font-weight:500;color:var(--txt);margin-top:4px">${p[1]}</div>
+          <div style="font-size:9px;color:var(--hnt);margin-top:1px;line-height:1.3">${p[2]}</div>
+          <div style="font-size:9px;color:${p[3].includes('RED')?'#991b1b':'#92400e'};margin-top:2px;font-weight:500">${p[3]}</div>
+        </div>`).join('')}
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+      <div style="padding:9px 12px;border-bottom:.5px solid var(--bdr);background:var(--card);flex-shrink:0">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:8px">
+            ${avEl('MK','var(--blul)','var(--blu)',28)}
+            <div><div style="font-size:12px;font-weight:500;color:var(--txt)">Mr. Kumar</div><div style="font-size:10px;color:var(--hnt)">Father of Rahul Kumar</div></div>
+          </div>
+          <span class="rbadge" style="background:#FCEBEB;color:#991b1b">Score 78 · RED</span>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;scrollbar-width:none">
+        <div class="msg theirs">Good afternoon Dr. Priya. I wanted to discuss Rahul's performance.<div class="msg-t">2:10 PM</div></div>
+        <div class="msg mine">Good afternoon Mr. Kumar. I'm glad you reached out. Rahul's study engagement has dropped significantly over the past 3 weeks.<div class="msg-t">2:12 PM</div></div>
+        <div class="msg theirs">He mentioned a family situation — we had a bereavement. He's better now and back to studying.<div class="msg-t">2:14 PM</div></div>
+        <div class="msg mine">I understand completely. I'll note this against the flag and reduce its weight. Please encourage him to meet me this week.<div class="msg-t">2:15 PM</div></div>
+      </div>
+      <div style="padding:9px 12px;border-top:.5px solid var(--bdr);background:var(--card);display:flex;gap:7px;flex-shrink:0">
+        <input class="input-styled" style="flex:1" placeholder="Type a message…"/>
+        <button class="btn-p" style="border-radius:7px">Send</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildMentors(type){
+  if(type==='staff') return`
+    <div class="card" style="margin-bottom:10px">
+      <div class="ch"><div class="ct">Your availability</div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--steell);border-radius:9px">
+        <div><div style="font-size:12px;font-weight:500;color:var(--txt)">Accept mentor sessions</div><div style="font-size:10px;color:var(--mut);margin-top:2px">Students can request you right now</div></div>
+        <div style="width:38px;height:22px;background:var(--grn);border-radius:20px;position:relative;cursor:pointer;border:.5px solid var(--grnb)">
+          <div style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:1px;right:1px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Staff mentors</div></div>
+      ${[
+        ['PR','Dr. Priya Ramesh','Class Advisor · CSE','Data Structures, Algorithms, System Design',true,true],
+        ['SK','Prof. Sanjay Kumar','Subject Teacher · CSE','OS, Networks, Systems Architecture',true,false],
+        ['MR','Dr. Maya Rao','Class Advisor · CSE','ML, Data Science, Python, Research',false,false],
+      ].map(m=>`<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:.5px solid #f8fafc">
+        <div style="width:34px;height:34px;border-radius:50%;background:var(--top);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#93c5fd;flex-shrink:0">${m[0]}</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:2px;flex-wrap:wrap">
+            <span style="font-size:12px;font-weight:500;color:var(--txt)">${m[1]}</span>
+            <span class="pill" style="background:#FAEEDA;color:#92400e">Staff</span>
+            <div style="width:6px;height:6px;border-radius:50%;background:${m[4]?'var(--grn)':'var(--hnt)'}"></div>
+            <span style="font-size:9px;color:${m[4]?'var(--grn)':'var(--hnt)'}">${m[4]?'Available':'Unavailable'}</span>
+          </div>
+          <div style="font-size:10px;color:var(--hnt);margin-bottom:5px">${m[2]}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:3px">
+            ${m[3].split(', ').map(t=>`<span style="font-size:9px;padding:2px 7px;border-radius:20px;background:var(--steell);color:var(--steel);border:.5px solid var(--bdr)">${t}</span>`).join('')}
+          </div>
+        </div>
+        ${m[5]?`<span style="font-size:10px;color:var(--hnt);font-style:italic;flex-shrink:0">You</span>`
+          :m[4]?`<button class="btn-g" style="flex-shrink:0">Request</button>`
+          :`<button style="padding:4px 10px;border-radius:6px;font-size:10px;color:var(--hnt);border:.5px solid var(--bdr);background:transparent;cursor:not-allowed">N/A</button>`}
+      </div>`).join('')}
+    </div>`;
+
+  return`<div class="card">
+    <div class="ch"><div class="ct">Peer mentors</div></div>
+    ${[
+      ['AR','Arjun Ramesh','CSE · Year 4','LeetCode, Competitive Programming, System Design',true],
+      ['NK','Neha Kumari','CSE · Year 3','Web Development, React, Node.js, TypeScript',true],
+      ['VS','Vikram Singh','CSE · Year 4','Machine Learning, Python, Data Science, NLP',false],
+    ].map(m=>`<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:.5px solid #f8fafc">
+      <div style="width:34px;height:34px;border-radius:50%;background:var(--blul);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--blu);flex-shrink:0">${m[0]}</div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:2px">
+          <span style="font-size:12px;font-weight:500;color:var(--txt)">${m[1]}</span>
+          <div style="width:6px;height:6px;border-radius:50%;background:${m[4]?'var(--grn)':'var(--hnt)'}"></div>
+          <span style="font-size:9px;color:${m[4]?'var(--grn)':'var(--hnt)'}">${m[4]?'Available':'Unavailable'}</span>
+        </div>
+        <div style="font-size:10px;color:var(--hnt);margin-bottom:5px">${m[2]}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:3px">
+          ${m[3].split(', ').map(t=>`<span style="font-size:9px;padding:2px 7px;border-radius:20px;background:var(--blul);color:var(--blu);border:.5px solid var(--blub)">${t}</span>`).join('')}
+        </div>
+      </div>
+      ${m[4]?`<button class="btn-blu" style="flex-shrink:0">Request</button>`
+        :`<button style="padding:4px 10px;border-radius:6px;font-size:10px;color:var(--hnt);border:.5px solid var(--bdr);background:transparent;cursor:not-allowed">N/A</button>`}
+    </div>`).join('')}
+  </div>`;
+}
+
+/* ── DRAWERS ── */
+function openStudentDrawer(name){
+  const s=S.find(x=>x.n===name)||S[0];
+  document.getElementById('drwT').textContent=s.n;
+  document.getElementById('drwS').textContent=`${s.r} · ${s.ty} · Risk score ${s.sc}`;
+  const dims=[
+    ['Attendance',s.risk==='RED'?42:s.risk==='AMBER'?65:88,'var(--grn)','Present 27/30 days'],
+    ['Marks',s.risk==='RED'?50:s.risk==='AMBER'?68:82,'var(--grn)','Avg across all subjects'],
+    ['Study activity',s.risk==='RED'?18:s.risk==='AMBER'?52:78,'var(--red)','Sessions this week'],
+    ['LMS activity',s.risk==='RED'?28:s.risk==='AMBER'?45:80,'var(--amb)','Module completions'],
+    ['Flashcards',s.risk==='RED'?55:s.risk==='AMBER'?62:80,'var(--grn)','Recall strength'],
+    ['Behaviour',s.risk==='RED'?70:88,88,'var(--blu)','No flags this month'],
+  ];
+  document.getElementById('drwB').innerHTML=`
+    <div style="background:${s.bc};border:.5px solid ${s.tc}33;border-radius:11px;padding:12px 13px;display:flex;align-items:center;gap:10px">
+      <div style="width:40px;height:40px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:${s.tc};flex-shrink:0">${s.i}</div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+          <span style="font-size:13px;font-weight:500;color:${s.tc}">${s.n}</span>
+          ${badge(s.risk,s.bc,s.tc)}
+        </div>
+        <div style="font-size:10px;color:${s.tc}99">${s.r} · ${s.ty}</div>
+      </div>
+      <div style="font-size:28px;font-weight:500;color:${s.tc}">${s.sc}</div>
+    </div>
+    <div class="dc">
+      <div class="dct">Quick stats</div>
+      ${[['Last session',s.ls],['Trajectory',`<span style="color:${s.tr.startsWith('+')?'var(--red)':'var(--grn)'}">${s.tr.startsWith('+')?'↑':'↓'} ${s.tr.replace(/[+-]/,'')} this week</span>`],['Active flags',s.fl.length?s.fl.map(f=>`<span class="flag-chip">${f}</span>`).join(' '):'None'],['Type',s.ty]].map(r=>`<div class="drow"><span class="dk">${r[0]}</span><span class="dv">${r[1]}</span></div>`).join('')}
+    </div>
+    <div class="dc">
+      <div class="dct">Risk dimensions</div>
+      ${dims.map(d=>`<div style="margin-bottom:9px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:11px;color:#555">${d[0]}</span>
+          <span style="font-size:11px;font-weight:500;color:${d[2]}">${d[1]}</span>
+        </div>
+        <div style="height:4px;background:#f5f2ec;border-radius:2px;overflow:hidden;margin-bottom:2px">
+          <div style="height:100%;width:${d[1]}%;background:${d[2]};border-radius:2px"></div>
+        </div>
+        <div style="font-size:9px;color:#aaa">${d[3]}</div>
+      </div>`).join('')}
+    </div>
+    ${s.fl.length?`<div class="dc">
+      <div class="dct">Active flag contest</div>
+      <div class="bq"><div class="bq-t">"I had a family emergency and could not study for 3 weeks. I have now resumed sessions."</div></div>
+      <button class="btn-p" style="width:100%;border-radius:7px" onclick="openDrawer('respond','${s.n}','${s.fl[0]}','')">Respond to contest</button>
+    </div>`:''}
+    <div style="display:flex;gap:7px;margin-top:2px">
+      <button class="btn-d" style="flex:1;border-radius:7px" onclick="openDrawer('intervene','${s.n}')">Create intervention</button>
+      <button class="btn-g" style="border-radius:7px">Add note</button>
+      <button class="btn-g" style="border-radius:7px" onclick="goPage(4);closeDrawer()">Chat parent</button>
+    </div>`;
+  document.getElementById('drw').classList.add('open');
+  document.getElementById('ov').classList.add('open');
+}
+
+function openDrawer(type,name,fl,note){
+  const configs={
+    intervene:{title:'Create intervention',sub:`For ${name}`,body:`
+      <div class="dc">
+        <div class="dct">Intervention plan</div>
+        <textarea class="textarea-styled" style="margin-bottom:9px" placeholder="Describe the intervention plan…">Resume daily study sessions — target minimum 1 hour per day. Follow up in 7 days.</textarea>
+        <div style="margin-bottom:9px">
+          <div style="font-size:10px;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em">Urgency level</div>
+          <div style="display:flex;gap:6px">
+            <button class="btn-d" style="flex:1">High</button>
+            <button class="btn-g" style="flex:1">Medium</button>
+            <button class="btn-g" style="flex:1">Low</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-p" style="flex:1;border-radius:7px">Send to student</button>
+          <button class="btn-g" style="border-radius:7px">Request HoD</button>
+        </div>
+      </div>`},
+    respond:{title:'Respond to contest',sub:`${name} · ${fl||''}`,body:`
+      <div class="dc">
+        <div class="dct">Student's note</div>
+        <div class="bq"><div class="bq-t">"I had a family emergency and could not study for 3 weeks. I have now resumed sessions and will catch up with the syllabus."</div></div>
+      </div>
+      <div class="dc">
+        <div class="dct">Your response</div>
+        <textarea class="textarea-styled" style="margin-bottom:9px" placeholder="Write your response — visible to student and attached to their risk record…"></textarea>
+        <div style="display:flex;gap:6px">
+          <button class="btn-p" style="flex:1;border-radius:7px">Submit response</button>
+          <button class="btn-g" style="border-radius:7px">Escalate to HoD</button>
+        </div>
+      </div>`},
+    newInt:{title:'New intervention',sub:'Select student and plan',body:`
+      <div class="dc">
+        <div class="dct">Select student</div>
+        <select class="select-styled" style="margin-bottom:9px">
+          ${S.map(s=>`<option>${s.n} — ${s.r} (${s.risk})</option>`).join('')}
+        </select>
+        <textarea class="textarea-styled" style="margin-bottom:9px" placeholder="Describe the intervention plan in plain language…"></textarea>
+        <div style="margin-bottom:9px">
+          <div style="font-size:10px;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em">Urgency</div>
+          <div style="display:flex;gap:6px">
+            <button class="btn-d" style="flex:1">High</button>
+            <button class="btn-g" style="flex:1">Medium</button>
+            <button class="btn-g" style="flex:1">Low</button>
+          </div>
+        </div>
+        <button class="btn-p" style="width:100%;border-radius:7px">Create intervention</button>
+      </div>`}
+  };
+  const cfg=configs[type]||{title:'Details',sub:'',body:''};
+  document.getElementById('drwT').textContent=cfg.title;
+  document.getElementById('drwS').textContent=cfg.sub;
+  document.getElementById('drwB').innerHTML=cfg.body;
+  document.getElementById('drw').classList.add('open');
+  document.getElementById('ov').classList.add('open');
+}
+
+function closeDrawer(){
+  document.getElementById('drw').classList.remove('open');
+  document.getElementById('ov').classList.remove('open');
+}
+
+/* ── NAVIGATION ── */
+let curPage=0,curTab=0;
+
+function renderPage(pi){
+  const p=PAGES[pi];
+  const te=document.getElementById('navTabs'),pe=document.getElementById('panelsWrap');
+  te.innerHTML='';pe.innerHTML='';
+  p.tabs.forEach((t,i)=>{
+    const b=document.createElement('div');
+    b.className='nt'+(i===0?' active':'');
+    b.id='nt'+i;b.textContent=t;
+    b.onclick=()=>switchTab(i);
+    te.appendChild(b);
+    const pnl=document.createElement('div');
+    pnl.className='panel'+(i===0?' active':'');
+    pnl.id='pnl'+i;
+    const pb=document.createElement('div');
+    pb.className='pb';
+    pb.innerHTML=p.panels[i]();
+    pnl.appendChild(pb);
+    pe.appendChild(pnl);
+  });
+  curTab=0;
+}
+
+function switchTab(n){
+  const prev=document.getElementById('nt'+curTab);
+  const prevP=document.getElementById('pnl'+curTab);
+  if(prev)prev.classList.remove('active');
+  if(prevP)prevP.classList.remove('active');
+  curTab=n;
+  const next=document.getElementById('nt'+n);
+  const nextP=document.getElementById('pnl'+n);
+  if(next)next.classList.add('active');
+  if(nextP)nextP.classList.add('active');
+}
+
+function goPage(n){
+  const old=document.getElementById('bn'+curPage);
+  if(old){
+    old.classList.remove('active');
+    const lbl=old.querySelector('.bnl');
+    const iw=old.querySelector('.bniw');
+    if(lbl)lbl.style.color='';
+    if(iw)iw.style.background='';
+  }
+  curPage=n;
+  const nw=document.getElementById('bn'+n);
+  if(nw){
+    nw.classList.add('active');
+    const lbl=nw.querySelector('.bnl');
+    const iw=nw.querySelector('.bniw');
+    if(lbl)lbl.style.color='var(--blu)';
+    if(iw)iw.style.background='var(--blul)';
+  }
+  renderPage(n);
+  closeDrawer();
+}
+
+renderPage(0);
+</script>

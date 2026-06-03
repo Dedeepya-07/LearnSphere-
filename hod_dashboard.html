@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HoD Dashboard — CSE Department</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+:root{
+  --navy:#150e28;--navy2:#150e28;--navy3:#2d234a;
+  --ice:#5544d4;--ice-l:#f2efff;--ice-b:#c4b5fd;
+  --gold:#b89600;--gold-l:#fdf6dc;--gold-b:#e8d060;
+  --bg:#f8f9fc;--card:#ffffff;--bdr:#eaedf3;
+  --txt:#111827;--mut:#6b7280;--hnt:#9ca3af;
+  --red:#ef4444;--redl:#fef2f2;--redb:#fca5a5;
+  --amb:#f59e0b;--ambl:#fffbeb;--ambb:#FAC775;
+  --grn:#10b981;--grnl:#ecfdf5;--grnb:#9FE1CB;
+  --teal:#1a7a9a;--teal-l:#e0f2f8;
+}
+body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;background:#e8eef5;display:flex;align-items:flex-start;justify-content:center;min-height:100vh;padding:32px 16px}
+
+/* SHELL */
+.shell{background:var(--bg);border-radius:24px;border:1px solid var(--bdr);width:100%;max-width:480px;height:780px;display:flex;flex-direction:column;overflow:hidden;position:relative;box-shadow:0 12px 32px rgba(0,0,0,0.06)}
+
+/* GRADIENTS on text */
+.grad-gold{background:linear-gradient(135deg,#d4a800 0%,#f0c420 50%,#b89600 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-red{background:linear-gradient(135deg,#E24B4A 0%,#ff6b6b 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-grn{background:linear-gradient(135deg,#1D9E75 0%,#26c48f 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-amb{background:linear-gradient(135deg,#BA7517 0%,#e09020 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-ice{background:linear-gradient(135deg,#a598fb 0%,#c4b5fd 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-name{background:linear-gradient(135deg,#fff 0%,#c4b5fd 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* TOP BAR */
+.topbar{background:var(--navy);padding:16px 18px 12px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.tb-av{width:36px;height:36px;border-radius:10px;background:var(--navy3);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#c4b5fd;flex-shrink:0;letter-spacing:.5px}
+.tb-name{font-size:16px;font-weight:600;line-height:1.2;color:#fff}
+.tb-meta{font-size:11px;color:#8f87b3;margin-top:2px}
+.ap{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.3px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(8px)}
+.ap.red{box-shadow:0 0 15px rgba(239,68,68,0.3);animation:glow-red 2.5s infinite}
+.ap.amb{box-shadow:0 0 15px rgba(245,158,11,0.3);animation:glow-amb 2.5s infinite}
+.ad{width:6px;height:6px;border-radius:50%;flex-shrink:0;animation:pulse-dot 2s ease-in-out infinite}
+@keyframes glow-red{0%,100%{box-shadow:0 0 10px rgba(239,68,68,0.2)}50%{box-shadow:0 0 20px rgba(239,68,68,0.6)}}
+@keyframes glow-amb{0%,100%{box-shadow:0 0 10px rgba(245,158,11,0.2)}50%{box-shadow:0 0 20px rgba(245,158,11,0.6)}}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
+
+/* PULSE BAND */
+.pulse-band{background:var(--navy);padding:13px 18px;display:flex;gap:14px;align-items:center;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.pulse-score-num{font-size:40px;font-weight:700;line-height:1;letter-spacing:-1px}
+.pulse-label{font-size:9px;color:#8f87b3;text-transform:uppercase;letter-spacing:.1em;margin-top:4px;font-weight:600}
+.comp-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.comp-row:last-child{margin-bottom:0}
+.comp-lbl{font-size:9px;color:#8f87b3;width:98px;flex-shrink:0;letter-spacing:.01em;font-weight:500}
+.comp-track{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.comp-fill{height:100%;border-radius:2px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.comp-val{font-size:9px;font-weight:600;width:20px;text-align:right;flex-shrink:0}
+
+/* STAT STRIP */
+.stat-strip{background:var(--navy);padding:10px 14px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex-shrink:0}
+.sc{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1)}
+.sc:hover{background:rgba(255,255,255,0.08);transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.sc:active{transform:translateY(0)}
+.sc-bar{height:3px;border-radius:2px 2px 0 0;margin:-10px -6px 9px}
+.sv{font-size:20px;font-weight:600;line-height:1;letter-spacing:-.5px}
+.sl{font-size:9px;color:#8f87b3;text-transform:uppercase;letter-spacing:.07em;margin-top:4px;font-weight:600}
+
+/* NAV TABS */
+.nav-tabs{background:var(--card);border-bottom:.5px solid var(--bdr);display:flex;flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nt{flex-shrink:0;padding:10px 15px;font-size:11px;font-weight:500;color:var(--hnt);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s ease;white-space:nowrap;position:relative}
+.nt:hover{color:var(--mut)}
+.nt.active{color:var(--navy);border-bottom-color:var(--gold);font-weight:600}
+
+/* PANELS */
+.panels{flex:1;overflow:hidden;position:relative}
+.panel{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden}
+.panel.active{display:flex;animation:slideIn .22s cubic-bezier(.4,0,.2,1)}
+@keyframes slideIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.pb{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:var(--bdr) transparent}
+.pb::-webkit-scrollbar{width:3px}
+.pb::-webkit-scrollbar-track{background:transparent}
+.pb::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:16px;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.02);transition:box-shadow .2s ease}
+.ch{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--bdr)}
+.ct{font-size:13px;font-weight:600;color:var(--txt);letter-spacing:-.1px}
+.cm{font-size:11px;color:var(--hnt);margin-top:2px}
+.cl{font-size:11px;color:var(--ice);cursor:pointer;font-weight:600;white-space:nowrap;margin-left:8px;flex-shrink:0;transition:color .15s}
+.cl:hover{color:var(--navy)}
+
+/* ROWS */
+.row{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;cursor:pointer;transition:all .15s ease;margin:0 -2px}
+.row:hover{background:var(--ice-l);transform:translateX(1px)}
+.row.pr{border-left:2px solid var(--red);border-radius:0 9px 9px 0;padding-left:8px}
+.row.pa{border-left:2px solid var(--amb);border-radius:0 9px 9px 0;padding-left:8px}
+.sn{font-size:12px;font-weight:600;color:var(--txt);letter-spacing:-.1px}
+.sm{font-size:10px;color:var(--hnt);margin-top:1px}
+
+/* BUTTONS */
+.btn-p{padding:7px 14px;border-radius:8px;font-size:11px;font-weight:600;background:linear-gradient(135deg,#0d2d4d,#0a2540);color:#e8f0f8;border:none;cursor:pointer;white-space:nowrap;transition:all .2s ease;letter-spacing:.1px}
+.btn-p:hover{background:linear-gradient(135deg,#1a4a6e,#0c3260);transform:translateY(-1px);box-shadow:0 4px 12px rgba(10,37,64,.2)}
+.btn-p:active{transform:translateY(0)}
+.btn-g{padding:6px 12px;border-radius:8px;font-size:10px;font-weight:500;color:var(--mut);border:.5px solid var(--bdr);background:transparent;cursor:pointer;white-space:nowrap;transition:all .15s ease}
+.btn-g:hover{background:var(--ice-l);border-color:var(--ice);color:var(--navy)}
+.btn-gold{padding:6px 13px;border-radius:8px;font-size:10px;font-weight:600;background:linear-gradient(135deg,#fdf6dc,#fef9e8);color:#5a4800;border:.5px solid var(--gold-b);cursor:pointer;white-space:nowrap;transition:all .2s ease}
+.btn-gold:hover{background:linear-gradient(135deg,#fdf0c0,#fef5d0);transform:translateY(-1px);box-shadow:0 3px 8px rgba(184,150,0,.15)}
+
+/* BADGES */
+.rbadge{font-size:9px;padding:2px 7px;border-radius:5px;font-weight:600;letter-spacing:.2px}
+.pill{display:inline-block;font-size:10px;padding:2px 9px;border-radius:20px;font-weight:500}
+.flag-chip{font-size:9px;padding:2px 8px;border-radius:5px;font-weight:600;font-family:'SF Mono','Fira Code',monospace;background:var(--ice-l);color:var(--mut);border:.5px solid var(--bdr);letter-spacing:.3px}
+.sc-chip{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500;white-space:nowrap;flex-shrink:0}
+
+/* WARN BAND */
+.warn{border-left:3px solid var(--amb);border-radius:0 11px 11px 0;padding:11px 14px;background:linear-gradient(135deg,#fffef5,#fffbeb);flex-shrink:0;box-shadow:inset 0 0 0 .5px rgba(186,117,23,.1)}
+
+/* SEARCH */
+.search-wrap{padding:10px 12px;border-bottom:.5px solid var(--bdr);background:var(--card);display:flex;gap:7px;align-items:center;flex-shrink:0}
+.search-wrap-inner{flex:1;position:relative}
+.search-input{width:100%;padding:7px 10px 7px 30px;border:.5px solid var(--bdr);border-radius:9px;font-size:11px;font-family:inherit;background:var(--ice-l);color:var(--txt);outline:none;transition:all .2s ease}
+.search-input:focus{border-color:var(--ice);background:var(--card);box-shadow:0 0 0 3px rgba(189,215,232,.2)}
+.search-input::placeholder{color:var(--hnt)}
+.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);pointer-events:none}
+.select-s{padding:7px 10px;border:.5px solid var(--bdr);border-radius:9px;font-size:11px;font-family:inherit;background:var(--ice-l);color:var(--txt);outline:none;cursor:pointer;transition:all .2s ease}
+.select-s:focus{border-color:var(--ice);background:var(--card)}
+.input-s{width:100%;padding:8px 10px;border:.5px solid var(--bdr);border-radius:9px;font-size:11px;font-family:inherit;background:var(--ice-l);color:var(--txt);outline:none;transition:all .2s ease}
+.input-s:focus{border-color:var(--ice);background:var(--card);box-shadow:0 0 0 3px rgba(189,215,232,.2)}
+.textarea-s{width:100%;min-height:68px;border:.5px solid var(--bdr);border-radius:9px;padding:9px;font-size:11px;font-family:inherit;background:var(--ice-l);color:var(--txt);resize:none;outline:none;line-height:1.5;transition:all .2s ease}
+.textarea-s:focus{border-color:var(--ice);background:var(--card);box-shadow:0 0 0 3px rgba(189,215,232,.2)}
+
+/* BLOCKQUOTE */
+.bq{border-left:2px solid var(--ice);padding:8px 12px;background:linear-gradient(135deg,#f8fcff,#f0f8ff);border-radius:0 8px 8px 0;margin:8px 0 10px}
+.bq-t{font-size:11px;color:#374151;font-style:italic;line-height:1.65}
+
+/* CONTEST CARD */
+.cc{background:linear-gradient(135deg,#f5f9fd,var(--ice-l));border:.5px solid var(--bdr);border-radius:11px;padding:12px;margin-bottom:8px;transition:box-shadow .2s}
+.cc:last-child{margin-bottom:0}
+.cc:hover{box-shadow:0 2px 8px rgba(10,37,64,.06)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{font-size:9px;color:var(--hnt);text-transform:uppercase;letter-spacing:.07em;padding:9px 8px;border-bottom:.5px solid var(--bdr);text-align:left;font-weight:600;background:var(--card);position:sticky;top:0;z-index:1}
+.tbl td{padding:8px;border-bottom:.5px solid var(--ice-l);vertical-align:middle;color:var(--txt)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr.pr td:first-child{border-left:2px solid var(--red);padding-left:6px}
+.tbl tr.pa td:first-child{border-left:2px solid var(--amb);padding-left:6px}
+.tbl tr:hover td{background:var(--ice-l);cursor:pointer;transition:background .12s}
+.traj-u{color:var(--red);font-size:11px;font-weight:600}
+.traj-d{color:var(--grn);font-size:11px;font-weight:600}
+
+/* OVERLAY & DRAWER */
+.overlay{position:absolute;inset:0;background:rgba(5,15,30,.6);border-radius:20px;opacity:0;pointer-events:none;transition:opacity .28s cubic-bezier(.4,0,.2,1);z-index:10;backdrop-filter:blur(2px)}
+.overlay.open{opacity:1;pointer-events:all}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:87%;background:var(--card);border-left:.5px solid var(--bdr);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:20;display:flex;flex-direction:column;border-radius:0 20px 20px 0;box-shadow:-8px 0 30px rgba(10,37,64,.12)}
+.drawer.open{transform:translateX(0)}
+.dh{background:linear-gradient(180deg,#0d2d4d,#0a2540);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;border-radius:0 20px 0 0;border-bottom:.5px solid rgba(189,215,232,.1)}
+.dt{font-size:13px;font-weight:600;color:#e8f0f8;letter-spacing:-.1px}
+.ds{font-size:10px;color:#3a5e78;margin-top:2px}
+.cbtn{width:28px;height:28px;border-radius:50%;background:rgba(26,74,110,.6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s ease}
+.cbtn:hover{background:rgba(26,74,110,1);transform:scale(1.05)}
+.dbody{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:var(--bdr) transparent}
+.dbody::-webkit-scrollbar{width:3px}
+.dbody::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px}
+.dc{background:linear-gradient(135deg,#f5f9fd,var(--ice-l));border:.5px solid var(--bdr);border-radius:12px;padding:12px 14px}
+.dct{font-size:10px;color:var(--hnt);text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:9px;padding-bottom:5px;border-bottom:.5px solid var(--bdr)}
+.drow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:.5px solid var(--ice-b)}
+.drow:last-child{border-bottom:none}
+.dk{font-size:11px;color:var(--hnt)}
+.dv{font-size:12px;font-weight:600;color:var(--txt)}
+
+/* BOTTOM NAV */
+.bot-nav{background:#fff;border-top:1px solid var(--bdr);padding:10px 6px 14px;display:flex;justify-content:space-around;flex-shrink:0}
+.bn{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 5px;border-radius:10px;min-width:38px;position:relative;transition:all .2s ease}
+.bn:hover .bniw{background:rgba(242,239,255,.5)}
+.bn.active .bnl{color:var(--navy);font-weight:600}
+.bn.active .bniw{background:var(--ice-l);color:var(--navy)}
+.bniw{padding:6px;display:flex;align-items:center;justify-content:center;transition:all .2s ease;border-radius:50%;color:var(--hnt)}
+.bnl{font-size:9px;color:var(--hnt);transition:color .15s;letter-spacing:.01em;font-weight:500}
+.bn-pip{position:absolute;top:2px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid var(--card);animation:pulse-pip 2.5s ease-in-out infinite}
+@keyframes pulse-pip{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}50%{box-shadow:0 0 0 4px rgba(239,68,68,0)}}
+</style>
+</head>
+<body>
+<div class="shell" id="shell">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="tb-av">RN</div>
+      <div>
+        <div class="tb-name grad-name">Prof. R. Nair — Head of Department</div>
+        <div class="tb-meta">CSE Department &middot; 240 students &middot; 5 advisors &middot; Mar 21</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:5px;flex-shrink:0">
+      <div class="ap red">
+        <div class="ad" style="background:#ef4444"></div>
+        <span style="color:#fca5a5">14 RED</span>
+      </div>
+      <div class="ap amb">
+        <div class="ad" style="background:#f59e0b"></div>
+        <span style="color:#fde68a">11 AMB</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PULSE BAND -->
+  <div class="pulse-band" id="pulseBand"></div>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="sc" onclick="goPage(1)">
+      <div class="sc-bar" style="background:linear-gradient(90deg,#E24B4A,#ff6b6b)"></div>
+      <div class="sv grad-red">14</div><div class="sl">Critical</div>
+    </div>
+    <div class="sc" onclick="goPage(1)">
+      <div class="sc-bar" style="background:linear-gradient(90deg,#BA7517,#e09020)"></div>
+      <div class="sv grad-amb">38</div><div class="sl">At Risk</div>
+    </div>
+    <div class="sc" onclick="goPage(1)">
+      <div class="sc-bar" style="background:linear-gradient(90deg,#1D9E75,#26c48f)"></div>
+      <div class="sv grad-grn">188</div><div class="sl">Stable</div>
+    </div>
+    <div class="sc" onclick="goPage(2)">
+      <div class="sc-bar" style="background:linear-gradient(90deg,#b89600,#f0c420)"></div>
+      <div class="sv grad-gold">67%</div><div class="sl">Placement</div>
+    </div>
+  </div>
+
+  <div class="nav-tabs" id="navTabs"></div>
+  <div class="panels" id="panelsWrap"></div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bot-nav">
+    <div class="bn active" id="bn0" onclick="goPage(0)">
+      <div class="bniw"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="5" height="5" rx="1.2" stroke="#0a2540" stroke-width="1.3"/><rect x="10" y="1" width="5" height="5" rx="1.2" stroke="#0a2540" stroke-width="1.3"/><rect x="1" y="10" width="5" height="5" rx="1.2" stroke="#0a2540" stroke-width="1.3"/><rect x="10" y="10" width="5" height="5" rx="1.2" stroke="#0a2540" stroke-width="1.3"/></svg></div>
+      <span class="bnl">Home</span>
+    </div>
+    <div class="bn" id="bn1" onclick="goPage(1)">
+      <div class="bniw"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="#8aaccb" stroke-width="1.3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5" stroke="#8aaccb" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+      <div class="bn-pip"></div>
+      <span class="bnl">Students</span>
+    </div>
+    <div class="bn" id="bn2" onclick="goPage(2)">
+      <div class="bniw"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 13l3-4 3 3 4-5" stroke="#8aaccb" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <span class="bnl">Placement</span>
+    </div>
+    <div class="bn" id="bn3" onclick="goPage(3)">
+      <div class="bniw"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" stroke="#8aaccb" stroke-width="1.3"/><path d="M8 5v4M8 11v.5" stroke="#8aaccb" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+      <span class="bnl">Advisors</span>
+    </div>
+    <div class="bn" id="bn4" onclick="goPage(4)">
+      <div class="bniw"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h7M3 12h5" stroke="#8aaccb" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+      <div class="bn-pip"></div>
+      <span class="bnl">Intervene</span>
+    </div>
+    <div class="bn" id="bn5" onclick="goPage(5)">
+      <div class="bniw"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" stroke="#8aaccb" stroke-width="1.3"/><path d="M6 6.5c0-1.1.9-2 2-2s2 .9 2 2-.9 1.5-2 1.5M8 11v.5" stroke="#8aaccb" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+      <span class="bnl">Config</span>
+    </div>
+    <div class="bn" id="bn6" onclick="goPage(6)">
+      <div class="bniw"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h5" stroke="#8aaccb" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+      <span class="bnl">Reports</span>
+    </div>
+    <div class="bn" id="bn7" onclick="goPage(7)">
+      <div class="bniw"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="5" width="12" height="9" rx="1.5" stroke="#8aaccb" stroke-width="1.3"/><path d="M5 5V4a3 3 0 016 0v1" stroke="#8aaccb" stroke-width="1.3"/></svg></div>
+      <span class="bnl">Hostel</span>
+    </div>
+  </div>
+
+  <div class="overlay" id="ov" onclick="closeDrawer()"></div>
+  <div class="drawer" id="drw">
+    <div class="dh">
+      <div><div class="dt" id="drwT">Details</div><div class="ds" id="drwS"></div></div>
+      <button class="cbtn" onclick="closeDrawer()">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1L1 9" stroke="#bdd7e8" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="dbody" id="drwB"></div>
+  </div>
+</div>
+
+<script>
+var S=[
+  {i:'RK',n:'Rahul Kumar',r:'22B-CS-041',ty:'Hosteller',adv:'Dr. Priya Ramesh',risk:'RED',sc:82,tr:'+9',rs:'Absent 8 of last 10 days',bc:'#FCEBEB',tc:'#991b1b'},
+  {i:'SK',n:'Sneha Kapoor',r:'22B-CS-027',ty:'Day Scholar',adv:'Dr. Priya Ramesh',risk:'RED',sc:78,tr:'+6',rs:'No study sessions in 22 days',bc:'#FCEBEB',tc:'#991b1b'},
+  {i:'AM',n:'Arjun Mehta',r:'22B-CS-088',ty:'Hosteller',adv:'Prof. S. Kumar',risk:'RED',sc:74,tr:'+4',rs:'Marks dropped by 20 points',bc:'#FCEBEB',tc:'#991b1b'},
+  {i:'PM',n:'Priya Mehta',r:'22B-CS-018',ty:'Day Scholar',adv:'Dr. Priya Ramesh',risk:'AMBER',sc:65,tr:'+3',rs:'LMS inactive for 14 days',bc:'#FAEEDA',tc:'#92400e'},
+  {i:'AJ',n:'Arun Joshi',r:'22B-CS-033',ty:'Hosteller',adv:'Prof. S. Kumar',risk:'AMBER',sc:58,tr:'-2',rs:'Marks dropped by 18 points',bc:'#FAEEDA',tc:'#92400e'},
+  {i:'NK',n:'Neha Kumari',r:'22B-CS-011',ty:'Hosteller',adv:'Dr. Maya Rao',risk:'GREEN',sc:28,tr:'-4',rs:'Stable performance',bc:'#E1F5EE',tc:'#0F6E56'},
+  {i:'VS',n:'Vikram Singh',r:'22B-CS-055',ty:'Day Scholar',adv:'Prof. A. Sharma',risk:'GREEN',sc:22,tr:'-3',rs:'Stable performance',bc:'#E1F5EE',tc:'#0F6E56'},
+];
+
+var advisors=[
+  {i:'PR',n:'Dr. Priya Ramesh',sec:'Section B',red:4,total:48,eff:78,resp:'2.1h'},
+  {i:'SK',n:'Prof. S. Kumar',sec:'Section A',red:12,total:50,eff:62,resp:'4.8h'},
+  {i:'MR',n:'Dr. Maya Rao',sec:'Section C',red:2,total:46,eff:84,resp:'1.8h'},
+  {i:'AS',n:'Prof. A. Sharma',sec:'Section D',red:1,total:48,eff:88,resp:'1.4h'},
+  {i:'RM',n:'Dr. R. Menon',sec:'Section E',red:3,total:48,eff:76,resp:'2.9h'},
+];
+
+var badgeTiers=[
+  {label:'Placement Ready',sub:'GREEN academic + STRONG skill',count:42,color:'#1D9E75',bg:'#E1F5EE'},
+  {label:'Development Track',sub:'GREEN academic + MODERATE skill',count:68,color:'#1D9E75',bg:'#E1F5EE'},
+  {label:'Skill Gap Identified',sub:'GREEN academic + INACTIVE skill',count:38,color:'#BA7517',bg:'#FAEEDA'},
+  {label:'On Watch',sub:'AMBER academic + any skill',count:38,color:'#BA7517',bg:'#FAEEDA'},
+  {label:'Critical Intervention',sub:'RED academic + any skill',count:14,color:'#E24B4A',bg:'#FCEBEB'},
+  {label:'Profile Incomplete',sub:'No coding handles linked',count:40,color:'#8aaccb',bg:'#eef5fa'},
+];
+
+var hostelBlocks=[
+  {name:'Block A',total:42,red:2,amb:8,grn:32},
+  {name:'Block B',total:38,red:4,amb:12,grn:22},
+  {name:'Block C',total:40,red:8,amb:14,grn:18},
+  {name:'Block D',total:36,red:0,amb:4,grn:32},
+  {name:'Block E',total:34,red:0,amb:0,grn:34},
+  {name:'Block F',total:40,red:0,amb:0,grn:40},
+];
+
+var pendingInterventions=[
+  {i:'RK',n:'Rahul Kumar',adv:'Dr. Priya Ramesh',plan:'Resume daily study sessions — target minimum 1 hour per day. Schedule a check-in after 7 days.',flag:'STUDY_NEGLECT',ago:'2h ago'},
+  {i:'SK',n:'Sneha Kapoor',adv:'Dr. Priya Ramesh',plan:'Medical leave follow-up — 3 unexplained absences flagged for formal review. Request documentation.',flag:'LOW_ATTEND',ago:'4h ago'},
+  {i:'AM',n:'Arjun Mehta',adv:'Prof. S. Kumar',plan:'Marks remediation plan — schedule weekly revision sessions with subject teacher for Data Structures.',flag:'LOW_MARKS',ago:'Yesterday'},
+];
+
+function av(init,bc,tc,sz){
+  sz=sz||28;
+  return '<div style="width:'+sz+'px;height:'+sz+'px;border-radius:'+Math.round(sz*0.28)+'px;background:'+bc+';color:'+tc+';display:flex;align-items:center;justify-content:center;font-size:'+Math.round(sz*0.34)+'px;font-weight:700;flex-shrink:0;letter-spacing:.3px">'+init+'</div>';
+}
+function badge(risk,bc,tc){
+  return '<span class="rbadge" style="background:'+bc+';color:'+tc+'">'+risk+'</span>';
+}
+function dimBar(label,val,color){
+  return '<div style="margin-bottom:10px">'
+    +'<div style="display:flex;justify-content:space-between;margin-bottom:4px">'
+    +'<span style="font-size:11px;color:#4a7090;font-weight:500">'+label+'</span>'
+    +'<span style="font-size:11px;font-weight:700;color:'+color+'">'+val+'</span>'
+    +'</div>'
+    +'<div style="height:4px;background:#eef5fa;border-radius:3px;overflow:hidden">'
+    +'<div style="height:100%;width:'+val+'%;background:linear-gradient(90deg,'+color+','+color+'cc);border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1)"></div>'
+    +'</div></div>';
+}
+
+function buildPulseBand(){
+  var band=document.getElementById('pulseBand');
+  var comps=[
+    {label:'Risk distribution',val:68,color:'#bdd7e8'},
+    {label:'Intervention rate',val:78,color:'#b89600'},
+    {label:'Advisor effectiveness',val:82,color:'#7ed4a0'},
+    {label:'Placement readiness',val:71,color:'#e8d060'},
+  ];
+
+  var scoreEl=document.createElement('div');
+  scoreEl.style.cssText='flex-shrink:0';
+  scoreEl.innerHTML='<div class="pulse-score-num grad-gold">74</div>'
+    +'<div class="pulse-label">Dept Pulse Score</div>'
+    +'<svg width="72" height="20" viewBox="0 0 72 20" style="margin-top:6px">'
+    +'<polyline points="0,16 9,12 18,9 27,11 36,7 45,10 54,5 72,3" fill="none" stroke="#b89600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+    +'<circle cx="72" cy="3" r="2.5" fill="#b89600"/>'
+    +'</svg>'
+    +'<div style="font-size:8px;color:#b89600;margin-top:2px;font-weight:600">&#8593; +4 pts this month</div>';
+
+  var divEl=document.createElement('div');
+  divEl.style.cssText='width:.5px;background:rgba(26,74,110,.8);align-self:stretch;flex-shrink:0;margin:0 6px';
+
+  var compCol=document.createElement('div');
+  compCol.style.cssText='flex:1';
+
+  comps.forEach(function(c){
+    var row=document.createElement('div');
+    row.className='comp-row';
+    row.innerHTML='<span class="comp-lbl">'+c.label+'</span>'
+      +'<div class="comp-track"><div class="comp-fill" style="width:'+c.val+'%;background:linear-gradient(90deg,'+c.color+'99,'+c.color+')"></div></div>'
+      +'<span class="comp-val" style="color:'+c.color+'">'+c.val+'</span>';
+    compCol.appendChild(row);
+  });
+
+  band.appendChild(scoreEl);
+  band.appendChild(divEl);
+  band.appendChild(compCol);
+}
+
+function buildOverview(){
+  var atRisk=S.filter(function(s){return s.risk!=='GREEN';});
+  var stuRows=atRisk.map(function(s){
+    var pin=s.risk==='RED'?'pr':'pa';
+    return '<div class="row '+pin+'" onclick="openStudentDrawer(\''+s.n+'\',event)">'
+      +av(s.i,s.bc,s.tc,30)
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="display:flex;align-items:center;gap:5px">'+badge(s.risk,s.bc,s.tc)
+      +'<span class="sn" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s.n+'</span></div>'
+      +'<div class="sm">'+s.r+' &middot; '+s.adv+'</div>'
+      +'</div>'
+      +'<span style="font-size:15px;font-weight:700;color:'+s.tc+';flex-shrink:0">'+s.sc+'</span>'
+      +'<button class="btn-g" style="font-size:10px;flex-shrink:0" onclick="openStudentDrawer(\''+s.n+'\',event)">View</button>'
+      +'</div>';
+  }).join('');
+
+  var actItems=[
+    {who:'Dr. Priya Ramesh',what:'Created intervention for Rahul Kumar (22B-CS-041)',when:'2h ago',col:'#E24B4A'},
+    {who:'Prof. S. Kumar',what:'Flagged Arjun Mehta — LOW_MARKS threshold crossed',when:'4h ago',col:'#BA7517'},
+    {who:'Dr. Maya Rao',what:'Responded to flag contest — Neha Kumari',when:'6h ago',col:'#1D9E75'},
+    {who:'Prof. R. Nair',what:'Approved intervention for Sneha Kapoor',when:'Yesterday',col:'#8aaccb'},
+  ];
+  var actRows=actItems.map(function(a){
+    return '<div style="display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:.5px solid #eef5fa">'
+      +'<div style="width:6px;height:6px;border-radius:50%;background:'+a.col+';flex-shrink:0;margin-top:4px"></div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<span style="font-size:11px;font-weight:600;color:#0a2540">'+a.who+'</span>'
+      +' <span style="font-size:11px;color:#4a7090">'+a.what+'</span>'
+      +'</div>'
+      +'<span style="font-size:10px;color:#8aaccb;flex-shrink:0;white-space:nowrap">'+a.when+'</span>'
+      +'</div>';
+  }).join('');
+
+  return '<div class="warn">'
+    +'<div style="display:flex;gap:10px;align-items:flex-start">'
+    +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px"><path d="M8 2l6 12H2L8 2z" stroke="#92400e" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 7v3M8 11.5v.5" stroke="#92400e" stroke-width="1.5" stroke-linecap="round"/></svg>'
+    +'<div style="flex:1">'
+    +'<div style="font-size:11px;font-weight:700;color:#713f12;margin-bottom:3px;letter-spacing:-.1px">Cohort warning &middot; Section B attendance drop</div>'
+    +'<div style="font-size:11px;color:#78350f;line-height:1.65">14 students from Section B have all dropped attendance in the last 10 days. Gemini: likely peer influence from Block C &mdash; 11 of 14 students reside together there.</div>'
+    +'<div style="display:flex;gap:6px;margin-top:9px">'
+    +'<button class="btn-gold" onclick="goPage(7)">Investigate Block C</button>'
+    +'<button class="btn-g">Dismiss</button>'
+    +'</div></div></div></div>'
+    +'<div class="card">'
+    +'<div class="ch"><div><div class="ct">Top at-risk students</div><div class="cm">Across all advisors &middot; department-wide</div></div>'
+    +'<span class="cl" onclick="goPage(1)">All students &rarr;</span></div>'
+    +stuRows+'</div>'
+    +'<div class="card">'
+    +'<div class="ch"><div><div class="ct">Recent department activity</div><div class="cm">Advisor actions &middot; live feed</div></div></div>'
+    +actRows+'</div>';
+}
+
+function buildWarnings(){
+  var warnings=[
+    {title:'Section B &middot; Attendance drop',body:'14 students dropped attendance over 10 days. Likely peer influence from Block C &mdash; 11 of 14 share that hostel block.',level:'HIGH',time:'Mar 21 &middot; 8:00 AM'},
+    {title:'Year 2 &middot; LMS inactivity spike',body:'9 second-year students have not opened LMS in 7+ days. Pattern aligns with upcoming internal assessment period — proactive outreach recommended.',level:'MEDIUM',time:'Mar 19 &middot; 6:00 AM'},
+    {title:'Block C &middot; Zero study sessions',body:'7 hosteliers in Block C recorded zero study sessions this week. Possible network disruption or coordinated group distraction.',level:'MEDIUM',time:'Mar 18 &middot; 6:00 AM'},
+  ];
+  var cards=warnings.map(function(w){
+    var bc=w.level==='HIGH'?'#FCEBEB':'#FAEEDA';
+    var tc=w.level==='HIGH'?'#991b1b':'#92400e';
+    return '<div style="background:linear-gradient(135deg,#f8fafd,#eef5fa);border:.5px solid #ccd8e8;border-radius:11px;padding:12px 14px;margin-bottom:9px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px">'
+      +'<span style="font-size:12px;font-weight:700;color:#0a2540;letter-spacing:-.1px">'+w.title+'</span>'
+      +'<span class="pill" style="background:'+bc+';color:'+tc+';flex-shrink:0;margin-left:8px">'+w.level+'</span>'
+      +'</div>'
+      +'<div style="font-size:11px;color:#4a7090;line-height:1.65;margin-bottom:7px">'+w.body+'</div>'
+      +'<div style="font-size:10px;color:#8aaccb;margin-bottom:9px">Gemini 2.0 Flash &middot; '+w.time+'</div>'
+      +'<div style="display:flex;gap:6px">'
+      +'<button class="btn-p" style="font-size:10px;padding:5px 12px">Investigate</button>'
+      +'<button class="btn-g" style="font-size:10px">Dismiss</button>'
+      +'</div></div>';
+  }).join('');
+  return '<div class="card"><div class="ch"><div><div class="ct">Active cohort warnings</div><div class="cm">Group-level deterioration detected by Gemini</div></div></div>'+cards+'</div>';
+}
+
+function buildAuditLog(){
+  var entries=[
+    {i:'PR',n:'Dr. Priya Ramesh',action:'Viewed risk profile &middot; Rahul Kumar (22B-CS-041)',time:'Today 2:14 PM',bc:'#FCEBEB',tc:'#991b1b'},
+    {i:'SK',n:'Prof. S. Kumar',action:'Created intervention &middot; Arjun Mehta — LOW_MARKS',time:'Today 11:30 AM',bc:'#FAEEDA',tc:'#92400e'},
+    {i:'MR',n:'Dr. Maya Rao',action:'Responded to flag contest &middot; Neha Kumari',time:'Today 10:05 AM',bc:'#E1F5EE',tc:'#0F6E56'},
+    {i:'RN',n:'Prof. R. Nair',action:'Approved intervention &middot; Sneha Kapoor — PENDING&rarr;SENT',time:'Yesterday 4:20 PM',bc:'#eef5fa',tc:'#0a2540'},
+    {i:'AS',n:'Prof. A. Sharma',action:'Modified risk threshold &middot; AMBER cutoff changed from 65 to 70',time:'Mar 19 9:15 AM',bc:'#FAEEDA',tc:'#92400e'},
+  ];
+  var rows=entries.map(function(e){
+    return '<div style="display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:.5px solid #eef5fa">'
+      +av(e.i,e.bc,e.tc,26)
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:11px;font-weight:600;color:#0a2540">'+e.n+'</div>'
+      +'<div style="font-size:10px;color:#4a7090;margin-top:1px;line-height:1.4">'+e.action+'</div>'
+      +'</div>'
+      +'<span style="font-size:10px;color:#8aaccb;flex-shrink:0;white-space:nowrap">'+e.time+'</span>'
+      +'</div>';
+  }).join('');
+  return '<div class="card"><div class="ch"><div><div class="ct">Audit log</div><div class="cm">Full access trail across department</div></div></div>'+rows+'</div>';
+}
+
+function buildHostelMini(){
+  var rows=hostelBlocks.map(function(b){
+    return '<div class="row" onclick="openDrawer(\'hostelBlock\',\''+b.name+'\',null)">'
+      +'<span style="font-size:12px;font-weight:600;color:#0a2540;width:60px;flex-shrink:0">'+b.name+'</span>'
+      +'<div style="flex:1;height:9px;border-radius:5px;overflow:hidden;display:flex">'
+      +'<div style="flex:'+b.red+';background:linear-gradient(90deg,#E24B4A,#ff6b6b)"></div>'
+      +'<div style="flex:'+b.amb+';background:linear-gradient(90deg,#BA7517,#e09020)"></div>'
+      +'<div style="flex:'+b.grn+';background:linear-gradient(90deg,#1D9E75,#26c48f)"></div>'
+      +'</div>'
+      +'<div style="display:flex;gap:8px;margin-left:10px;flex-shrink:0">'
+      +'<span style="font-size:10px;color:#991b1b;font-weight:700">'+b.red+'R</span>'
+      +'<span style="font-size:10px;color:#92400e;font-weight:700">'+b.amb+'A</span>'
+      +'<span style="font-size:10px;color:#0F6E56;font-weight:700">'+b.grn+'G</span>'
+      +'</div></div>';
+  }).join('');
+  return '<div class="card"><div class="ch"><div><div class="ct">Hostel block risk map</div><div class="cm">Tap a block to drill into students</div></div><span class="cl" onclick="goPage(7)">Full view &rarr;</span></div>'+rows+'</div>';
+}
+
+function buildStudentTable(filter){
+  var list=filter==='ALL'?S:S.filter(function(s){return s.risk===filter;});
+  var rows=list.map(function(s){
+    var pin=s.risk==='RED'?'pr':s.risk==='AMBER'?'pa':'';
+    var pl=pin?'':'padding-left:12px';
+    var tDir=s.tr.startsWith('+')?'traj-u':'traj-d';
+    var tArrow=s.tr.startsWith('+')?'&#8593;':'&#8595;';
+    var tVal=s.tr.replace(/[+-]/,'');
+    return '<tr class="'+pin+'" onclick="openStudentDrawer(\''+s.n+'\',event)">'
+      +'<td style="'+pl+'"><div style="display:flex;align-items:center;gap:8px">'+av(s.i,s.bc,s.tc,26)
+      +'<div><div style="font-size:11px;font-weight:600;color:#0a2540">'+s.n+'</div>'
+      +'<div style="font-size:9px;color:#8aaccb">'+s.r+'</div></div></div></td>'
+      +'<td>'+badge(s.risk,s.bc,s.tc)+'</td>'
+      +'<td><span style="font-size:15px;font-weight:700;color:'+s.tc+'">'+s.sc+'</span></td>'
+      +'<td><span class="'+tDir+'">'+tArrow+' '+tVal+'</span></td>'
+      +'<td style="font-size:10px;color:#8aaccb">'+s.adv.split(' ').slice(-1)[0]+'</td>'
+      +'<td><button class="btn-g" style="font-size:10px" onclick="openStudentDrawer(\''+s.n+'\',event)">View</button></td>'
+      +'</tr>';
+  }).join('');
+  return '<div style="background:#fff;border:.5px solid #ccd8e8;border-radius:13px;overflow:hidden;display:flex;flex-direction:column">'
+    +'<div class="search-wrap">'
+    +'<div class="search-wrap-inner">'
+    +'<svg class="search-icon" width="13" height="13" viewBox="0 0 16 16" fill="none">'
+    +'<circle cx="6.5" cy="6.5" r="4.5" stroke="#8aaccb" stroke-width="1.5"/>'
+    +'<path d="M10 10l3 3" stroke="#8aaccb" stroke-width="1.5" stroke-linecap="round"/></svg>'
+    +'<input class="search-input" placeholder="Search by name, reg number, or advisor&hellip;"/>'
+    +'</div>'
+    +'<select class="select-s" style="width:130px">'
+    +'<option>Risk: High first</option><option>Name A&ndash;Z</option><option>Advisor</option><option>Score</option>'
+    +'</select></div>'
+    +'<div style="overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:#ccd8e8 transparent">'
+    +'<table class="tbl"><thead><tr>'
+    +'<th style="padding-left:12px">Student</th><th>Risk</th><th>Score</th><th>Trend</th><th>Advisor</th><th>Action</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table></div>'
+    +'<div style="padding:9px 12px;border-top:.5px solid #ccd8e8;display:flex;justify-content:space-between;align-items:center;background:#fff">'
+    +'<span style="font-size:10px;color:#8aaccb">Showing '+list.length+' of 240 students</span>'
+    +'<div style="display:flex;gap:5px">'
+    +'<button class="btn-g" style="font-size:10px;padding:4px 10px">&larr; Prev</button>'
+    +'<button class="btn-g" style="font-size:10px;padding:4px 10px">Next &rarr;</button>'
+    +'</div></div></div>';
+}
+
+function buildBadgeTiers(){
+  var rows=badgeTiers.map(function(t){
+    var pct=Math.round(t.count/240*100);
+    var barW=Math.min(100,Math.round(t.count/240*280));
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:.5px solid #eef5fa">'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:12px;font-weight:600;color:#0a2540;letter-spacing:-.1px">'+t.label+'</div>'
+      +'<div style="font-size:10px;color:#8aaccb;margin-top:1px">'+t.sub+'</div>'
+      +'</div>'
+      +'<div style="width:72px;height:6px;background:#eef5fa;border-radius:3px;overflow:hidden;flex-shrink:0">'
+      +'<div style="height:100%;width:'+barW+'%;background:linear-gradient(90deg,'+t.color+'99,'+t.color+');border-radius:3px"></div>'
+      +'</div>'
+      +'<span style="font-size:14px;font-weight:700;color:'+t.color+';width:26px;text-align:right;flex-shrink:0">'+t.count+'</span>'
+      +'<span style="font-size:10px;color:#8aaccb;width:32px;text-align:right;flex-shrink:0">'+pct+'%</span>'
+      +'</div>';
+  }).join('');
+  return '<div class="card">'
+    +'<div class="ch"><div><div class="ct">Placement badge tier distribution</div><div class="cm">All 240 students &middot; CSE Department</div></div>'
+    +'<button class="btn-gold" style="font-size:10px;padding:5px 11px">Export CSV</button></div>'
+    +rows+'</div>';
+}
+
+function buildAdvisorWorkload(){
+  var rows=advisors.map(function(a){
+    var color=a.red>=8?'#E24B4A':a.red>=4?'#BA7517':'#1D9E75';
+    var pct=Math.round(a.red/12*100);
+    return '<div class="row" onclick="openAdvisorDrawer(\''+a.n+'\',event)">'
+      +av(a.i,'#daeaf4','#0a2540',32)
+      +'<div style="flex:1;min-width:0">'
+      +'<div class="sn" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+a.n+'</div>'
+      +'<div class="sm">'+a.sec+' &middot; '+a.total+' students</div>'
+      +'</div>'
+      +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">'
+      +'<div style="width:85px;height:6px;background:#eef5fa;border-radius:3px;overflow:hidden">'
+      +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,'+color+'99,'+color+');border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1)"></div>'
+      +'</div>'
+      +'<span style="font-size:11px;font-weight:700;color:'+color+'">'+a.red+' RED</span>'
+      +'</div>'
+      +'<button class="btn-g" style="font-size:10px;flex-shrink:0" onclick="openDrawer(\'reassign\',\''+a.n+'\',null)">Reassign</button>'
+      +'</div>';
+  }).join('');
+  return '<div class="card"><div class="ch"><div><div class="ct">Workload fairness index</div><div class="cm">RED student distribution across all advisors</div></div></div>'+rows+'</div>';
+}
+
+function buildInterventionsPending(){
+  var cards=pendingInterventions.map(function(itv){
+    return '<div class="cc">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">'
+      +'<div style="display:flex;align-items:center;gap:9px">'
+      +av(itv.i,'#FCEBEB','#991b1b',32)
+      +'<div><div style="font-size:12px;font-weight:700;color:#0a2540;letter-spacing:-.1px">'+itv.n+'</div>'
+      +'<div style="font-size:10px;color:#8aaccb">via '+itv.adv+' &middot; '+itv.ago+'</div>'
+      +'</div></div>'
+      +'<span class="flag-chip">'+itv.flag+'</span>'
+      +'</div>'
+      +'<div class="bq"><div class="bq-t">'+itv.plan+'</div></div>'
+      +'<div style="display:flex;gap:6px">'
+      +'<button class="btn-p" style="flex:1;border-radius:8px;font-size:10px" onclick="openDrawer(\'approveInt\',\''+itv.n+'\',\''+itv.plan.replace(/'/g,"\\'")+'\')">'
+      +'Approve &amp; send</button>'
+      +'<button class="btn-gold" style="font-size:10px" onclick="openDrawer(\'modifyInt\',\''+itv.n+'\',\''+itv.plan.replace(/'/g,"\\'")+'\')">Modify</button>'
+      +'<button class="btn-g" style="font-size:10px" onclick="openStudentDrawer(\''+itv.n+'\',event)">Profile</button>'
+      +'</div></div>';
+  }).join('');
+  return '<div class="card"><div class="ch"><div><div class="ct">Pending your approval</div><div class="cm">RED interventions requiring HoD sign-off before delivery</div></div></div>'+cards+'</div>';
+}
+
+function buildSemesterComparison(){
+  var rows=[
+    {m:'RED students',c:'14',p:'22',d:'-8'},
+    {m:'AMBER students',c:'38',p:'51',d:'-13'},
+    {m:'GREEN students',c:'188',p:'167',d:'+21'},
+    {m:'Placement ready %',c:'42%',p:'34%',d:'+8%'},
+    {m:'Intervention rate',c:'89%',p:'74%',d:'+15%'},
+    {m:'Advisor effectiveness',c:'78%',p:'65%',d:'+13%'},
+  ].map(function(r){
+    return '<tr style="border-bottom:.5px solid #eef5fa">'
+      +'<td style="padding:8px;color:#0a2540;font-weight:600">'+r.m+'</td>'
+      +'<td style="padding:8px;text-align:center;color:#0a2540;font-weight:700;background:#eef5fa">'+r.c+'</td>'
+      +'<td style="padding:8px;text-align:center;color:#8aaccb">'+r.p+'</td>'
+      +'<td style="padding:8px;text-align:center;font-weight:700;color:#1D9E75">'+r.d+'</td>'
+      +'</tr>';
+  }).join('');
+  return '<div class="card">'
+    +'<div class="ch"><div><div class="ct">Semester-over-semester comparison</div><div class="cm">Quantitative evidence for NAAC evaluators</div></div></div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:11px">'
+    +'<thead><tr>'
+    +'<th style="text-align:left;padding:8px;border-bottom:.5px solid #ccd8e8;font-size:9px;color:#8aaccb;text-transform:uppercase;letter-spacing:.07em">Metric</th>'
+    +'<th style="text-align:center;padding:8px;border-bottom:.5px solid #ccd8e8;font-size:9px;color:#8aaccb;text-transform:uppercase;background:#eef5fa">This sem</th>'
+    +'<th style="text-align:center;padding:8px;border-bottom:.5px solid #ccd8e8;font-size:9px;color:#8aaccb;text-transform:uppercase">Last sem</th>'
+    +'<th style="text-align:center;padding:8px;border-bottom:.5px solid #ccd8e8;font-size:9px;color:#8aaccb;text-transform:uppercase">Delta</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+
+function buildHostelFull(){
+  var rows=hostelBlocks.map(function(b){
+    var redPill=b.red>0?'<span class="pill" style="background:#FCEBEB;color:#991b1b">'+b.red+' RED</span>':'';
+    var ambPill=b.amb>0?'<span class="pill" style="background:#FAEEDA;color:#92400e">'+b.amb+' AMBER</span>':'';
+    return '<div class="row" onclick="openDrawer(\'hostelBlock\',\''+b.name+'\',null)">'
+      +'<span style="font-size:12px;font-weight:700;color:#0a2540;width:62px;flex-shrink:0">'+b.name+'</span>'
+      +'<div style="flex:1">'
+      +'<div style="display:flex;gap:5px;margin-bottom:5px">'+redPill+ambPill
+      +'<span class="pill" style="background:#E1F5EE;color:#0F6E56">'+b.grn+' GREEN</span>'
+      +'</div>'
+      +'<div style="height:7px;border-radius:4px;overflow:hidden;display:flex">'
+      +'<div style="flex:'+b.red+';background:linear-gradient(90deg,#E24B4A,#ff6b6b)"></div>'
+      +'<div style="flex:'+b.amb+';background:linear-gradient(90deg,#BA7517,#e09020)"></div>'
+      +'<div style="flex:'+b.grn+';background:linear-gradient(90deg,#1D9E75,#26c48f)"></div>'
+      +'</div></div>'
+      +'<span style="font-size:10px;color:#8aaccb;margin-left:8px;flex-shrink:0">'+b.total+'</span>'
+      +'</div>';
+  }).join('');
+  return '<div class="card"><div class="ch"><div><div class="ct">All hostel blocks</div><div class="cm">Tap any block to drill into students</div></div></div>'+rows+'</div>';
+}
+
+var PAGES=[
+  {title:'Dashboard',meta:'Department overview &middot; Mar 21, 2026',
+   tabs:['Overview','Warnings','Activity','Hostel'],
+   panels:[buildOverview,buildWarnings,buildAuditLog,buildHostelMini]},
+  {title:'Students',meta:'240 students &middot; CSE Department',
+   tabs:['All &middot; 240','RED &middot; 14','AMBER &middot; 38','GREEN &middot; 188'],
+   panels:[function(){return buildStudentTable('ALL');},function(){return buildStudentTable('RED');},function(){return buildStudentTable('AMBER');},function(){return buildStudentTable('GREEN');}]},
+  {title:'Placement &amp; Skill',meta:'Badge tiers &middot; Skill health &middot; Coding stats',
+   tabs:['Badge tiers','Skill overview','Coding stats'],
+   panels:[buildBadgeTiers,
+    function(){
+      var levels=[{l:'STRONG',v:42,c:'#1D9E75',bg:'#E1F5EE',br:'#9FE1CB'},{l:'MODERATE',v:108,c:'#BA7517',bg:'#FAEEDA',br:'#FAC775'},{l:'INACTIVE',v:50,c:'#8aaccb',bg:'#eef5fa',br:'#ccd8e8'}];
+      var grid=levels.map(function(x){return '<div style="background:'+x.bg+';border:.5px solid '+x.br+';border-radius:11px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:700;color:'+x.c+'">'+x.v+'</div><div style="font-size:9px;color:'+x.c+';margin-top:3px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">'+x.l+'</div></div>';}).join('');
+      var top=[{i:'AR',n:'Arjun Ramesh',r:'22B-CS-041',sc:88},{i:'NP',n:'Nisha Patel',r:'22B-CS-022',sc:82},{i:'VK',n:'Vijay Kumar',r:'22B-CS-067',sc:78}];
+      var rows=top.map(function(s){return '<div class="row">'+av(s.i,'#E1F5EE','#0F6E56',30)+'<div style="flex:1"><div class="sn">'+s.n+'</div><div class="sm">'+s.r+'</div></div><span style="font-size:15px;font-weight:700;color:#1D9E75">'+s.sc+'</span><span class="pill" style="background:#E1F5EE;color:#0F6E56">STRONG</span></div>';}).join('');
+      return '<div class="card"><div class="ch"><div><div class="ct">Department skill health</div><div class="cm">240 students &middot; STRONG / MODERATE / INACTIVE breakdown</div></div></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">'+grid+'</div><div class="ch" style="margin-top:4px"><div class="ct">Top skill performers</div></div>'+rows+'</div>';
+    },
+    function(){
+      var platforms=[
+        {i:'LC',n:'LeetCode',c:'#E24B4A',bg:'#FCEBEB',stats:['142 avg solved','68% acceptance rate','230 active students']},
+        {i:'CF',n:'Codeforces',c:'#185FA5',bg:'#E6F1FB',stats:['1,240 avg rating','Specialist avg tier','180 active students']},
+        {i:'GH',n:'GitHub',c:'#0a2540',bg:'#eef5fa',stats:['38 avg commits/month','12 avg public repos','200 active students']},
+        {i:'CC',n:'CodeChef',c:'#BA7517',bg:'#FAEEDA',stats:['1,480 avg rating','2-star avg tier','150 active students']},
+      ];
+      var cards=platforms.map(function(p){return '<div style="display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#f5f9fd,#eef5fa);border:.5px solid #ccd8e8;border-radius:10px;padding:10px 12px;margin-bottom:8px">'+av(p.i,p.bg,p.c,32)+'<div style="flex:1"><div style="font-size:12px;font-weight:700;color:#0a2540;margin-bottom:4px">'+p.n+'</div><div style="display:flex;gap:10px;flex-wrap:wrap">'+p.stats.map(function(s){return '<span style="font-size:10px;color:#4a7090">'+s+'</span>';}).join('')+'</div></div></div>';}).join('');
+      return '<div class="card"><div class="ch"><div><div class="ct">Platform activity summary</div><div class="cm">Department-wide averages</div></div></div>'+cards+'</div>';
+    }
+   ]},
+  {title:'Advisors',meta:'Workload &middot; Effectiveness &middot; Reassign',
+   tabs:['Workload','Effectiveness','Reassign'],
+   panels:[buildAdvisorWorkload,
+    function(){
+      var rows=advisors.map(function(a){
+        var c=a.eff>=80?'#1D9E75':a.eff>=70?'#BA7517':'#E24B4A';
+        return '<div class="row">'+av(a.i,'#daeaf4','#0a2540',30)
+          +'<div style="flex:1;min-width:0"><div class="sn">'+a.n+'</div><div class="sm">Avg response: '+a.resp+' &middot; '+a.total+' students</div></div>'
+          +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">'
+          +'<div style="width:80px;height:6px;background:#eef5fa;border-radius:3px;overflow:hidden">'
+          +'<div style="height:100%;width:'+a.eff+'%;background:linear-gradient(90deg,'+c+'99,'+c+');border-radius:3px"></div></div>'
+          +'<span style="font-size:11px;font-weight:700;color:'+c+'">'+a.eff+'% eff.</span>'
+          +'</div></div>';
+      }).join('');
+      return '<div class="card"><div class="ch"><div><div class="ct">Intervention effectiveness</div><div class="cm">Improvement rate per advisor</div></div></div>'+rows+'</div>';
+    },
+    function(){
+      var opts1=S.filter(function(s){return s.risk!=='GREEN';}).map(function(s){return '<option>'+s.n+' &mdash; '+s.r+' ('+s.risk+' &middot; '+s.adv+')</option>';}).join('');
+      var opts2=advisors.map(function(a){return '<option>'+a.n+' ('+a.sec+' &middot; '+a.red+' RED)</option>';}).join('');
+      return '<div class="card"><div class="ch"><div><div class="ct">Reassign a student</div><div class="cm">Move students between advisors directly</div></div></div>'
+        +'<div style="display:flex;flex-direction:column;gap:10px">'
+        +'<div><div style="font-size:10px;color:#8aaccb;margin-bottom:5px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">Select student</div><select class="select-s" style="width:100%">'+opts1+'</select></div>'
+        +'<div><div style="font-size:10px;color:#8aaccb;margin-bottom:5px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">Reassign to advisor</div><select class="select-s" style="width:100%">'+opts2+'</select></div>'
+        +'<button class="btn-p" style="border-radius:9px">Confirm reassignment</button>'
+        +'</div></div>';
+    }
+   ]},
+  {title:'Interventions',meta:'Pending approval &middot; Full pipeline',
+   tabs:['Pending &middot; 3','All active','Resolved'],
+   panels:[buildInterventionsPending,
+    function(){
+      var items=[
+        {i:'RK',n:'Rahul Kumar',adv:'Dr. Priya',plan:'Resume daily sessions',status:'Sent to student',lc:'#E24B4A',bc:'#FCEBEB',tc:'#991b1b',sc:'#E1F5EE',stc:'#0F6E56'},
+        {i:'PM',n:'Priya Mehta',adv:'Dr. Priya',plan:'Complete 3 LMS modules',status:'Pending HoD',lc:'#1a7a9a',bc:'#FAEEDA',tc:'#92400e',sc:'#e0f2f8',stc:'#1a7a9a'},
+        {i:'SK',n:'Sneha Kapoor',adv:'Dr. Priya',plan:'Medical leave follow-up',status:'Monitoring',lc:'#8aaccb',bc:'#FCEBEB',tc:'#991b1b',sc:'#eef5fa',stc:'#8aaccb'},
+        {i:'AM',n:'Arjun Mehta',adv:'Prof. Kumar',plan:'Marks remediation plan',status:'Approved',lc:'#BA7517',bc:'#FCEBEB',tc:'#991b1b',sc:'#FAEEDA',stc:'#92400e'},
+      ];
+      var rows=items.map(function(x){
+        return '<div style="display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:.5px solid #eef5fa">'
+          +'<div style="width:2px;background:linear-gradient(180deg,'+x.lc+','+x.lc+'88);align-self:stretch;border-radius:2px;flex-shrink:0;margin-top:3px"></div>'
+          +av(x.i,x.bc,x.tc,30)
+          +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:12px;font-weight:700;color:#0a2540;letter-spacing:-.1px">'+x.n+'</div>'
+          +'<div style="font-size:10px;color:#8aaccb;margin-top:1px">via '+x.adv+'</div>'
+          +'<div style="font-size:11px;color:#4a7090;margin-top:2px">'+x.plan+'</div></div>'
+          +'<span class="sc-chip" style="background:'+x.sc+';color:'+x.stc+'">'+x.status+'</span>'
+          +'</div>';
+      }).join('');
+      return '<div class="card"><div class="ch"><div><div class="ct">All active interventions</div><div class="cm">All advisors &middot; all statuses</div></div></div>'+rows+'</div>';
+    },
+    function(){
+      var rows=[{i:'NK',n:'Neha Kumari',plan:'Resume attendance after absences',delta:'Risk 52 &rarr; 34'},{i:'VS',n:'Vikram Singh',plan:'LMS catch-up plan — completed',delta:'Risk 61 &rarr; 28'}].map(function(x){
+        return '<div class="row">'+av(x.i,'#E1F5EE','#0F6E56',30)
+          +'<div style="flex:1;min-width:0"><div class="sn">'+x.n+'</div><div class="sm">'+x.plan+'</div></div>'
+          +'<div style="text-align:right;flex-shrink:0">'
+          +'<span class="pill" style="background:#E1F5EE;color:#0F6E56">Completed</span>'
+          +'<div style="font-size:10px;color:#1D9E75;margin-top:3px;font-weight:600">'+x.delta+'</div>'
+          +'</div></div>';
+      }).join('');
+      return '<div class="card"><div class="ch"><div><div class="ct">Resolved interventions</div><div class="cm">Completed with positive outcome</div></div></div>'+rows+'</div>';
+    }
+   ]},
+  {title:'Config',meta:'Risk bands &middot; Pulse alert &middot; Placement',
+   tabs:['Risk bands','Pulse alert','Placement'],
+   panels:[
+    function(){
+      var bands=[
+        {label:'GREEN &mdash; safe zone',c:'#1D9E75',bg:'#E1F5EE',from:'0',to:'40'},
+        {label:'AMBER &mdash; watch zone',c:'#BA7517',bg:'#FAEEDA',from:'40',to:'70'},
+        {label:'RED &mdash; critical zone',c:'#E24B4A',bg:'#FCEBEB',from:'70',to:'100'},
+      ];
+      var rows=bands.map(function(b){
+        return '<div style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:'+b.bg+';border-radius:10px;border:.5px solid '+b.bg+'">'
+          +'<div style="width:10px;height:10px;border-radius:50%;background:'+b.c+';flex-shrink:0"></div>'
+          +'<div style="flex:1;font-size:12px;font-weight:600;color:#0a2540">'+b.label+'</div>'
+          +'<div style="display:flex;align-items:center;gap:6px">'
+          +'<input class="input-s" style="width:46px;text-align:center;background:#fff" value="'+b.from+'"/>'
+          +'<span style="font-size:11px;color:#8aaccb">to</span>'
+          +'<input class="input-s" style="width:46px;text-align:center;background:#fff" value="'+b.to+'"/>'
+          +'</div></div>';
+      }).join('');
+      return '<div class="card"><div class="ch"><div><div class="ct">Risk band thresholds</div><div class="cm">Department overrides institution defaults</div></div></div>'
+        +'<div style="display:flex;flex-direction:column;gap:8px">'+rows
+        +'<button class="btn-p" style="border-radius:9px">Save thresholds</button></div></div>';
+    },
+    function(){
+      return '<div class="card"><div class="ch"><div><div class="ct">Pulse score alert threshold</div><div class="cm">Receive a notification when score drops below this value</div></div></div>'
+        +'<div style="text-align:center;padding:20px 0 16px">'
+        +'<div style="font-size:50px;font-weight:700;letter-spacing:-2px;line-height:1" class="grad-gold" id="pulseVal">60</div>'
+        +'<div style="font-size:10px;color:#8aaccb;margin-top:5px;text-transform:uppercase;letter-spacing:.1em;font-weight:500">Alert threshold</div>'
+        +'<input type="range" min="30" max="90" value="60" step="1" style="width:80%;margin-top:16px;accent-color:#b89600" oninput="var el=document.getElementById(\'pulseVal\');if(el)el.textContent=this.value"/>'
+        +'</div>'
+        +'<div style="background:linear-gradient(135deg,#f5f9fd,#eef5fa);border:.5px solid #ccd8e8;border-radius:10px;padding:11px 13px;margin-bottom:11px">'
+        +'<div style="font-size:11px;color:#4a7090;line-height:1.7">You will receive an in-app notification when the Department Pulse Score drops below this threshold. Current score is <span style="font-weight:700;color:#0a2540">74</span>.</div>'
+        +'</div>'
+        +'<button class="btn-p" style="width:100%;border-radius:9px">Save alert threshold</button></div>';
+    },
+    function(){
+      return '<div class="card"><div class="ch"><div><div class="ct">Placement configuration</div><div class="cm">Department-level overrides</div></div></div>'
+        +'<div style="display:flex;flex-direction:column;gap:10px">'
+        +'<div><div style="font-size:10px;color:#8aaccb;margin-bottom:5px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">Placement Ready minimum score</div><input class="input-s" value="75"/></div>'
+        +'<div><div style="font-size:10px;color:#8aaccb;margin-bottom:5px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">Skill Gap &mdash; min LeetCode problems solved</div><input class="input-s" value="50"/></div>'
+        +'<div><div style="font-size:10px;color:#8aaccb;margin-bottom:5px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">Active handle requirement</div>'
+        +'<select class="select-s" style="width:100%"><option>At least 1 platform linked</option><option>At least 2 platforms linked</option><option>All 4 platforms linked</option></select></div>'
+        +'<button class="btn-p" style="border-radius:9px">Save placement config</button>'
+        +'</div></div>';
+    }
+   ]},
+  {title:'Reports',meta:'NAAC &middot; Semester comparison &middot; Export',
+   tabs:['Semester comparison','NAAC PDF','Export'],
+   panels:[buildSemesterComparison,
+    function(){
+      var fields=[['Date range start','2024-08-01'],['Date range end','2025-03-21'],['Institution name','XYZ Engineering College']];
+      var fRows=fields.map(function(f){return '<div style="margin-bottom:9px"><div style="font-size:10px;color:#8aaccb;margin-bottom:5px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">'+f[0]+'</div><input class="input-s" value="'+f[1]+'"/></div>';}).join('');
+      return '<div class="card"><div class="ch"><div><div class="ct">NAAC / NBA trilingual PDF</div><div class="cm">English &middot; Tamil &middot; Hindi section headers</div></div></div>'
+        +'<div style="background:linear-gradient(135deg,#f5f9fd,#eef5fa);border:.5px solid #ccd8e8;border-radius:10px;padding:11px 13px;margin-bottom:13px">'
+        +'<div style="font-size:11px;color:#4a7090;line-height:1.7">7-section PDF: executive summary, risk overview, subject failure rates, remediation evidence, educator metrics, trend analysis, methodology appendix. Trilingual section headers.</div></div>'
+        +fRows
+        +'<button class="btn-p" style="width:100%;margin-top:5px;border-radius:9px">Generate NAAC PDF &rarr;</button></div>';
+    },
+    function(){
+      var exports=[
+        {name:'Placement readiness report',desc:'All students &middot; badge tier &middot; skill level &middot; placement score',route:'GET /api/placement/report'},
+        {name:'Skill cohort export',desc:'All students sorted by skill &middot; platform breakdown',route:'GET /api/skill/cohort'},
+        {name:'Risk distribution',desc:'RED / AMBER / GREEN counts with full risk scores',route:'GET /api/hod/risk-export'},
+        {name:'Intervention outcomes',desc:'All interventions with outcome deltas and timeline',route:'GET /api/hod/interventions/export'},
+      ];
+      return '<div class="card"><div class="ch"><div><div class="ct">Export options</div><div class="cm">CSV reports for TPO and admin</div></div></div>'
+        +exports.map(function(e){
+          return '<div style="display:flex;align-items:flex-start;gap:10px;background:linear-gradient(135deg,#f5f9fd,#eef5fa);border:.5px solid #ccd8e8;border-radius:10px;padding:11px 13px;margin-bottom:8px">'
+            +'<div style="flex:1;min-width:0">'
+            +'<div style="font-size:12px;font-weight:700;color:#0a2540;margin-bottom:3px;letter-spacing:-.1px">'+e.name+'</div>'
+            +'<div style="font-size:10px;color:#4a7090;margin-bottom:3px">'+e.desc+'</div>'
+            +'<div style="font-size:9px;font-family:\'SF Mono\',\'Fira Code\',monospace;color:#8aaccb;letter-spacing:.3px">'+e.route+'</div>'
+            +'</div><button class="btn-gold" style="flex-shrink:0">Export</button></div>';
+        }).join('')+'</div>';
+    }
+   ]},
+  {title:'Hostel Block Risk',meta:'Block-level student distribution',
+   tabs:['All blocks','Block C &middot; Critical'],
+   panels:[buildHostelFull,
+    function(){
+      var blockC=S.filter(function(s){return s.ty==='Hosteller';});
+      var rows=blockC.map(function(s){
+        var pin=s.risk==='RED'?'pr':s.risk==='AMBER'?'pa':'';
+        return '<div class="row '+pin+'" onclick="openStudentDrawer(\''+s.n+'\',event)">'
+          +av(s.i,s.bc,s.tc,30)
+          +'<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:5px">'+badge(s.risk,s.bc,s.tc)
+          +'<span class="sn">'+s.n+'</span></div>'
+          +'<div class="sm">'+s.r+' &middot; '+s.adv+'</div></div>'
+          +'<span style="font-size:15px;font-weight:700;color:'+s.tc+';flex-shrink:0">'+s.sc+'</span>'
+          +'</div>';
+      }).join('');
+      return '<div style="background:linear-gradient(135deg,#fff5f5,#FCEBEB);border:.5px solid #fca5a5;border-radius:11px;padding:11px 14px;margin-bottom:0;flex-shrink:0">'
+        +'<div style="font-size:11px;font-weight:700;color:#991b1b;letter-spacing:-.1px">Block C &mdash; highest risk concentration in department</div>'
+        +'<div style="font-size:11px;color:#791F1F;margin-top:2px">8 RED &middot; 14 AMBER &middot; 18 GREEN &middot; 40 total students</div>'
+        +'</div>'
+        +'<div class="card"><div class="ch"><div class="ct">Students in Block C</div><div class="cm">Hostellers only</div></div>'+rows+'</div>';
+    }
+   ]}
+];
+
+// DRAWERS
+function openStudentDrawer(name,evt){
+  if(evt) evt.stopPropagation();
+  var s=S.find(function(x){return x.n===name;})||S[0];
+  document.getElementById('drwT').textContent=s.n;
+  document.getElementById('drwS').textContent=s.r+' \u00b7 '+s.ty+' \u00b7 '+s.adv;
+  var dims=[
+    {l:'Attendance',v:s.risk==='RED'?42:s.risk==='AMBER'?65:88,c:'#1D9E75'},
+    {l:'Marks',v:s.risk==='RED'?50:s.risk==='AMBER'?68:82,c:'#1D9E75'},
+    {l:'Study activity',v:s.risk==='RED'?18:s.risk==='AMBER'?52:78,c:'#E24B4A'},
+    {l:'LMS activity',v:s.risk==='RED'?28:s.risk==='AMBER'?45:80,c:'#BA7517'},
+    {l:'Flashcard recall',v:s.risk==='RED'?55:s.risk==='AMBER'?62:80,c:'#1D9E75'},
+    {l:'Behaviour trend',v:88,c:'#1a7a9a'},
+  ];
+  document.getElementById('drwB').innerHTML=
+    '<div style="background:'+s.bc+';border-radius:12px;padding:13px 14px;display:flex;align-items:center;gap:11px">'
+    +av(s.i,'#fff',s.tc,42)
+    +'<div style="flex:1;min-width:0">'
+    +'<div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">'
+    +'<span style="font-size:14px;font-weight:700;color:'+s.tc+';letter-spacing:-.2px">'+s.n+'</span>'
+    +badge(s.risk,s.bc,s.tc)+'</div>'
+    +'<div style="font-size:10px;color:'+s.tc+'99;line-height:1.4">'+s.r+' &middot; '+s.ty+'<br>'+s.adv+'</div>'
+    +'</div>'
+    +'<div style="font-size:32px;font-weight:700;color:'+s.tc+';flex-shrink:0;letter-spacing:-1px">'+s.sc+'</div></div>'
+    +'<div class="dc"><div class="dct">Quick stats</div>'
+    +'<div class="drow"><span class="dk">Trend this week</span><span class="dv" style="color:'+(s.tr.startsWith('+')?'#E24B4A':'#1D9E75')+'">'+(s.tr.startsWith('+')?'\u2191':'\u2193')+' '+s.tr.replace(/[+-]/,'')+' pts</span></div>'
+    +'<div class="drow"><span class="dk">Primary concern</span><span class="dv">'+s.rs+'</span></div>'
+    +'<div class="drow"><span class="dk">Student type</span><span class="dv">'+s.ty+'</span></div>'
+    +'<div class="drow"><span class="dk">Class advisor</span><span class="dv">'+s.adv+'</span></div></div>'
+    +'<div class="dc"><div class="dct">Risk dimensions</div>'
+    +dims.map(function(d){return dimBar(d.l,d.v,d.c);}).join('')+'</div>'
+    +'<div style="display:flex;gap:7px">'
+    +'<button class="btn-p" style="flex:1;border-radius:8px" onclick="goPage(4);closeDrawer()">View interventions</button>'
+    +'<button class="btn-g" style="border-radius:8px" onclick="openDrawer(\'reassign\',\'\',null)">Reassign</button>'
+    +'</div>';
+  document.getElementById('drw').classList.add('open');
+  document.getElementById('ov').classList.add('open');
+}
+
+function openAdvisorDrawer(name,evt){
+  if(evt) evt.stopPropagation();
+  var a=advisors.find(function(x){return x.n===name;})||advisors[0];
+  document.getElementById('drwT').textContent=a.n;
+  document.getElementById('drwS').textContent=a.sec+' \u00b7 '+a.total+' students';
+  var effC=a.eff>=80?'#1D9E75':a.eff>=70?'#BA7517':'#E24B4A';
+  var redC=a.red>=8?'#E24B4A':a.red>=4?'#BA7517':'#1D9E75';
+  document.getElementById('drwB').innerHTML=
+    '<div class="dc"><div class="dct">Advisor summary</div>'
+    +'<div class="drow"><span class="dk">Section</span><span class="dv">'+a.sec+'</span></div>'
+    +'<div class="drow"><span class="dk">Total students</span><span class="dv">'+a.total+'</span></div>'
+    +'<div class="drow"><span class="dk">RED students</span><span class="dv" style="color:'+redC+';font-weight:700">'+a.red+'</span></div>'
+    +'<div class="drow"><span class="dk">Effectiveness rate</span><span class="dv" style="color:'+effC+';font-weight:700">'+a.eff+'%</span></div>'
+    +'<div class="drow"><span class="dk">Avg response time</span><span class="dv">'+a.resp+'</span></div></div>'
+    +'<div class="dc"><div class="dct">Reassign a student from this advisor</div>'
+    +'<select class="select-s" style="width:100%;margin-bottom:9px">'+S.map(function(s){return '<option>'+s.n+' \u2014 '+s.r+' ('+s.risk+')</option>';}).join('')+'</select>'
+    +'<select class="select-s" style="width:100%;margin-bottom:9px">'+advisors.filter(function(x){return x.n!==a.n;}).map(function(x){return '<option>'+x.n+' ('+x.sec+' \u00b7 '+x.red+' RED)</option>';}).join('')+'</select>'
+    +'<button class="btn-p" style="width:100%;border-radius:8px">Confirm reassignment</button></div>';
+  document.getElementById('drw').classList.add('open');
+  document.getElementById('ov').classList.add('open');
+}
+
+function openDrawer(type,name,extra){
+  var t='Details',s='',b='';
+  if(type==='approveInt'){
+    t='Approve intervention';s='For '+name;
+    b='<div class="dc"><div class="dct">Intervention plan</div>'
+      +'<div class="bq"><div class="bq-t">'+(extra||'Resume daily study sessions.')+'</div></div></div>'
+      +'<div style="display:flex;gap:7px">'
+      +'<button class="btn-p" style="flex:1;border-radius:8px">Approve &amp; send to student</button>'
+      +'<button class="btn-g" style="border-radius:8px">Modify first</button></div>';
+  } else if(type==='modifyInt'){
+    t='Modify intervention';s='For '+name;
+    b='<div class="dc"><div class="dct">Edit plan before sending</div>'
+      +'<textarea class="textarea-s" style="margin-bottom:10px">'+(extra||'Resume daily study sessions.')+'</textarea>'
+      +'<button class="btn-p" style="width:100%;border-radius:8px">Approve modified plan \u2192</button></div>';
+  } else if(type==='reassign'){
+    t='Reassign student';s='Move to a different advisor';
+    b='<div class="dc"><div class="dct">Select student &amp; target advisor</div>'
+      +'<select class="select-s" style="width:100%;margin-bottom:9px">'+S.filter(function(x){return x.risk!=='GREEN';}).map(function(s){return '<option>'+s.n+' \u2014 '+s.r+' ('+s.risk+')</option>';}).join('')+'</select>'
+      +'<select class="select-s" style="width:100%;margin-bottom:9px">'+advisors.map(function(a){return '<option>'+a.n+' ('+a.sec+' \u00b7 '+a.red+' RED)</option>';}).join('')+'</select>'
+      +'<button class="btn-p" style="width:100%;border-radius:8px">Confirm reassignment</button></div>';
+  } else if(type==='hostelBlock'){
+    t=name+' \u2014 Risk detail';s='Block-level student breakdown';
+    b='<div class="dc"><div class="dct">Risk distribution</div>'
+      +'<div style="display:flex;height:12px;border-radius:6px;overflow:hidden;margin-bottom:11px">'
+      +'<div style="flex:8;background:linear-gradient(90deg,#E24B4A,#ff6b6b)"></div>'
+      +'<div style="flex:14;background:linear-gradient(90deg,#BA7517,#e09020)"></div>'
+      +'<div style="flex:18;background:linear-gradient(90deg,#1D9E75,#26c48f)"></div>'
+      +'</div>'
+      +'<div class="drow"><span class="dk">RED students</span><span class="dv" style="color:#E24B4A;font-weight:700">8</span></div>'
+      +'<div class="drow"><span class="dk">AMBER students</span><span class="dv" style="color:#BA7517;font-weight:700">14</span></div>'
+      +'<div class="drow"><span class="dk">GREEN students</span><span class="dv" style="color:#1D9E75;font-weight:700">18</span></div>'
+      +'<div class="drow"><span class="dk">Total students</span><span class="dv">40</span></div></div>'
+      +'<div class="dc"><div class="dct">Gemini cohort analysis</div>'
+      +'<div style="border-left:2px solid #bdd7e8;padding:8px 12px;background:linear-gradient(135deg,#f8fcff,#f0f8ff);border-radius:0 8px 8px 0;font-size:11px;color:#374151;font-style:italic;line-height:1.65">'
+      +'"Block C shows an elevated concentration of at-risk students. 11 of 14 Section B absentees reside here. Peer influence or shared environmental conditions are the likely contributing factors."'
+      +'</div></div>'
+      +'<button class="btn-p" style="width:100%;border-radius:8px" onclick="goPage(1);closeDrawer()">View all Block C students \u2192</button>';
+  }
+  document.getElementById('drwT').textContent=t;
+  document.getElementById('drwS').textContent=s;
+  document.getElementById('drwB').innerHTML=b;
+  document.getElementById('drw').classList.add('open');
+  document.getElementById('ov').classList.add('open');
+}
+
+function closeDrawer(){
+  document.getElementById('drw').classList.remove('open');
+  document.getElementById('ov').classList.remove('open');
+}
+
+// NAVIGATION
+var curPage=0,curTab=0;
+
+function renderPage(pi){
+  var p=PAGES[pi];
+  var te=document.getElementById('navTabs');
+  var pe=document.getElementById('panelsWrap');
+  te.innerHTML='';
+  pe.innerHTML='';
+  p.tabs.forEach(function(t,i){
+    var b=document.createElement('div');
+    b.className='nt'+(i===0?' active':'');
+    b.id='nt'+i;
+    b.innerHTML=t;
+    b.onclick=(function(idx){return function(){switchTab(idx);};})(i);
+    te.appendChild(b);
+    var pnl=document.createElement('div');
+    pnl.className='panel'+(i===0?' active':'');
+    pnl.id='pnl'+i;
+    var pb=document.createElement('div');
+    pb.className='pb';
+    pb.innerHTML=p.panels[i]();
+    pnl.appendChild(pb);
+    pe.appendChild(pnl);
+  });
+  curTab=0;
+  var meta=document.querySelector('.tb-meta');
+  if(meta) meta.innerHTML=p.meta;
+}
+
+function switchTab(n){
+  var pt=document.getElementById('nt'+curTab);
+  var pp=document.getElementById('pnl'+curTab);
+  if(pt) pt.classList.remove('active');
+  if(pp) pp.classList.remove('active');
+  curTab=n;
+  var nt=document.getElementById('nt'+n);
+  var np=document.getElementById('pnl'+n);
+  if(nt) nt.classList.add('active');
+  if(np) np.classList.add('active');
+}
+
+function goPage(n){
+  var ob=document.getElementById('bn'+curPage);
+  if(ob){
+    ob.classList.remove('active');
+    var l=ob.querySelector('.bnl'),iw=ob.querySelector('.bniw');
+    if(l) l.style.color='';
+    if(iw) iw.style.background='';
+    ob.querySelectorAll('svg circle,svg path,svg rect').forEach(function(el){
+      if(el.getAttribute('stroke')&&el.getAttribute('stroke')!=='none') el.setAttribute('stroke','#8aaccb');
+    });
+  }
+  curPage=n;
+  var nb=document.getElementById('bn'+n);
+  if(nb){
+    nb.classList.add('active');
+    var l=nb.querySelector('.bnl'),iw=nb.querySelector('.bniw');
+    if(l) l.style.color='#0a2540';
+    if(iw) iw.style.background='#daeaf4';
+    nb.querySelectorAll('svg circle,svg path,svg rect').forEach(function(el){
+      if(el.getAttribute('stroke')&&el.getAttribute('stroke')!=='none') el.setAttribute('stroke','#0a2540');
+    });
+  }
+  renderPage(n);
+  closeDrawer();
+}
+
+buildPulseBand();
+renderPage(0);
+</script>
+</body>
+</html>

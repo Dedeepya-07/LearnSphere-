@@ -1,0 +1,699 @@
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Outfit',system-ui,-apple-system,sans-serif}
+:root{
+  --ind:#5544d4;--indl:#f2efff;--indm:#7c6ce0;
+  --grn:#10b981;--grnl:#ecfdf5;
+  --amb:#f59e0b;--ambl:#fffbeb;
+  --red:#ef4444;--redl:#fef2f2;
+  --bg:#f8f9fc;--card:#fff;--bdr:#eaedf3;
+  --txt:#111827;--mut:#6b7280;--hnt:#9ca3af;
+}
+.shell{font-family:var(--font-sans);background:var(--bg);border-radius:24px;border:1px solid var(--bdr);width:100%;max-width:400px;margin:0 auto;height:700px;display:flex;flex-direction:column;overflow:hidden;position:relative;box-shadow:0 12px 32px rgba(0,0,0,0.06)}
+.topbar{background:#150e28;padding:16px 16px 12px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center}
+.tb-name{font-size:16px;font-weight:600;color:#fff}
+.tb-meta{font-size:11px;color:#8f87b3;margin-top:2px}
+.tb-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:5px 14px;backdrop-filter:blur(8px);box-shadow:0 0 15px rgba(196,181,253,0.3);animation:glow-badge 3s ease-in-out infinite}
+.tb-badge span{font-size:10px;color:#c4b5fd;font-weight:600;letter-spacing:0.02em}
+@keyframes glow-badge{0%,100%{box-shadow:0 0 10px rgba(196,181,253,0.2)}50%{box-shadow:0 0 20px rgba(196,181,253,0.5)}}
+.score-strip{background:#150e28;display:flex;gap:1px;flex-shrink:0;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.ssb{flex:1;padding:10px 8px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:background .15s}
+.ssb:hover{background:rgba(255,255,255,0.05)}
+.ssnum{font-size:18px;font-weight:600;line-height:1}
+.sslbl{font-size:10px;color:#8f87b3;letter-spacing:.03em;margin-top:2px}
+.sshit{font-size:8px;color:#5a527c;margin-top:1px}
+.sec-tabs{display:flex;gap:8px;padding:14px;flex-shrink:0;overflow-x:auto;scrollbar-width:none;background:var(--bg)}
+.sec-tabs::-webkit-scrollbar{display:none}
+.st{flex-shrink:0;font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;border:1px solid transparent;background:transparent;color:var(--mut);cursor:pointer;transition:all .2s ease}
+.st.active{background:#fff;color:var(--txt);border-color:var(--bdr);box-shadow:0 2px 6px rgba(0,0,0,0.03)}
+.panels{flex:1;overflow:hidden;position:relative}
+.panel{position:absolute;inset:0;padding:0 14px 10px;display:none;flex-direction:column;gap:12px;overflow-y:auto;scrollbar-width:none}
+.panel::-webkit-scrollbar{display:none}
+.panel.active{display:flex}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:16px;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.02)}
+.sh{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center}
+.sha{font-size:11px;color:var(--ind);cursor:pointer;letter-spacing:0;font-weight:500;text-transform:none}
+.stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;flex-shrink:0}
+.stat-c{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:12px 8px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.02)}
+.sv{font-size:18px;font-weight:600;color:var(--txt)}
+.sl{font-size:9px;color:#bbb;margin-top:2px}
+.ddot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dtrk{flex:1;height:4px;background:#f5f2ec;border-radius:2px;overflow:hidden}
+.dfl{height:100%;border-radius:2px}
+.heatmap{display:flex;gap:2px}
+.hm-col{display:flex;flex-direction:column;gap:2px}
+.hm-cell{width:9px;height:9px;border-radius:1px}
+.sbars{display:flex;align-items:flex-end;gap:4px;height:32px;margin-bottom:8px}
+.sbar{flex:1;border-radius:3px}
+.sft{display:flex;justify-content:space-between}
+.sfv{font-size:13px;font-weight:500;color:var(--ind);text-align:center}
+.sfl{font-size:9px;color:#bbb;margin-top:1px;text-align:center}
+.timer-big{font-size:48px;font-weight:500;letter-spacing:-2px;line-height:1;text-align:center}
+.timer-phase{font-size:12px;text-align:center;margin-top:5px}
+.tbtn{padding:9px 20px;border-radius:20px;font-size:12px;cursor:pointer;font-family:var(--font-sans);font-weight:500;border:.5px solid var(--bdr);background:var(--card);color:#222}
+.tbtn.pri{background:var(--ind);color:#fff;border-color:var(--ind)}
+.tbtn.amb{background:var(--amb);color:#fff;border-color:var(--amb)}
+.fc-wrap{cursor:pointer;margin-bottom:4px}
+.fc-inner{position:relative;height:130px;transform-style:preserve-3d;transition:transform .4s;perspective:600px}
+.fc-inner.flip{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:13px;display:flex;align-items:center;justify-content:center;padding:16px;text-align:center;border:.5px solid #d4ccf8}
+.fc-front{background:#f5f2ff}
+.fc-back{background:#E1F5EE;border-color:#9FE1CB;transform:rotateY(180deg)}
+.mbtn{flex:1;padding:7px 4px;border-radius:9px;border:.5px solid var(--bdr);font-size:11px;cursor:pointer;font-family:var(--font-sans);background:var(--card);color:#888;text-align:center}
+.mbtn.active{background:var(--indl);color:var(--ind);border-color:#c4b5fd;font-weight:500}
+.pill{display:inline-block;font-size:10px;padding:3px 10px;border-radius:12px;font-weight:600}
+.bot-nav{background:#fff;border-top:1px solid var(--bdr);padding:10px 6px 14px;display:flex;justify-content:space-around;flex-shrink:0}
+.bn{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:2px 5px;border-radius:8px;min-width:40px}
+.bniw{padding:6px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .2s ease;color:#bbb}
+.bnl{font-size:9px;color:#bbb;font-weight:500;transition:all .2s ease}
+.bn.active .bnl{color:var(--ind);font-weight:600}
+.bn.active .bniw{background:var(--indl);color:var(--ind)}
+.overlay{position:absolute;inset:0;background:rgba(20,16,34,.5);border-radius:18px;opacity:0;pointer-events:none;transition:opacity .22s;z-index:10}
+.overlay.open{opacity:1;pointer-events:all}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:85%;background:#fff;border-left:.5px solid #e8e4dc;transform:translateX(100%);transition:transform .26s cubic-bezier(.4,0,.2,1);z-index:20;display:flex;flex-direction:column;border-radius:0 18px 18px 0}
+.drawer.open{transform:translateX(0)}
+.dh{background:#1c1829;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;border-radius:0 18px 0 0}
+.dt{font-size:13px;font-weight:500;color:#f0ecff}
+.ds{font-size:11px;color:#7c6fa0;margin-top:2px}
+.cbtn{width:26px;height:26px;border-radius:50%;background:#2a2245;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dbody{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:9px}
+.dc{background:#f9f8f5;border:.5px solid #ede9e0;border-radius:11px;padding:11px 13px}
+.dct{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.09em;font-weight:500;margin-bottom:9px;padding-bottom:5px;border-bottom:.5px solid #ede9e0}
+.drow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:.5px solid #f3f0e8}
+.drow:last-child{border-bottom:none}
+.dk{font-size:11px;color:#888}
+.dv{font-size:12px;font-weight:500;color:#222}
+</style>
+
+<div class="shell" id="shell">
+  <div class="topbar" id="topbar">
+    <div><div class="tb-name" id="pgTitle">Dashboard</div><div class="tb-meta" id="pgMeta">Good morning, Arjun</div></div>
+    <div class="tb-badge"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l1.6 3.2 3.6.5-2.6 2.5.6 3.6L8 9.6 4.8 11.3l.6-3.6L3 5.2l3.6-.5z" fill="#c4b5fd"/></svg><span>Placement Ready</span></div>
+  </div>
+  <div class="score-strip">
+    <div class="ssb" onclick="openDrawer('risk')">
+      <svg width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="none" stroke="#2e2348" stroke-width="4"/><circle cx="16" cy="16" r="12" fill="none" stroke="#a78bfa" stroke-width="4" stroke-dasharray="75.4" stroke-dashoffset="60" stroke-linecap="round" transform="rotate(-90 16 16)"/></svg>
+      <div><div class="ssnum" style="color:#a78bfa">22</div><div class="sslbl">Risk</div><div class="sshit">tap for details</div></div>
+    </div>
+    <div class="ssb" onclick="openDrawer('skill')">
+      <svg width="30" height="26" viewBox="0 0 30 26"><rect x="0" y="17" width="6" height="9" rx="1.5" fill="#1D9E75" opacity=".35"/><rect x="8" y="11" width="6" height="15" rx="1.5" fill="#1D9E75" opacity=".6"/><rect x="16" y="4" width="6" height="22" rx="1.5" fill="#1D9E75" opacity=".85"/><rect x="24" y="0" width="6" height="26" rx="1.5" fill="#1D9E75"/></svg>
+      <div><div class="ssnum" style="color:#1D9E75">74</div><div class="sslbl">Skill</div><div class="sshit">tap for details</div></div>
+    </div>
+    <div class="ssb" onclick="openDrawer('placement')">
+      <svg width="40" height="24" viewBox="0 0 40 24"><path d="M4 21 A16 16 0 0 1 36 21" fill="none" stroke="#2e2348" stroke-width="5" stroke-linecap="round"/><path d="M4 21 A16 16 0 0 1 36 21" fill="none" stroke="#1D9E75" stroke-width="5" stroke-linecap="round" stroke-dasharray="50.3" stroke-dashoffset="10"/></svg>
+      <div><div class="ssnum" style="color:#1D9E75">79</div><div class="sslbl">Placement</div><div class="sshit">tap for details</div></div>
+    </div>
+  </div>
+  <div class="sec-tabs" id="secTabs"></div>
+  <div class="panels" id="panelsWrap"></div>
+  <div class="bot-nav">
+    <div class="bn active" id="bn0" onclick="goPage(0)">
+      <div class="bniw"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></div>
+      <span class="bnl">Home</span>
+    </div>
+    <div class="bn" id="bn1" onclick="goPage(1)">
+      <div class="bniw"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></svg></div>
+      <span class="bnl">Health</span>
+    </div>
+    <div class="bn" id="bn2" onclick="goPage(2)">
+      <div class="bniw"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <span class="bnl">Skills</span>
+    </div>
+    <div class="bn" id="bn3" onclick="goPage(3)">
+      <div class="bniw"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+      <span class="bnl">Study</span>
+    </div>
+    <div class="bn" id="bn4" onclick="goPage(4)">
+      <div class="bniw"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg></div>
+      <span class="bnl">Review</span>
+    </div>
+  </div>
+  <div class="overlay" id="ov" onclick="closeDrawer()"></div>
+  <div class="drawer" id="drw">
+    <div class="dh">
+      <div><div class="dt" id="drwT">Details</div><div class="ds" id="drwS"></div></div>
+      <button class="cbtn" onclick="closeDrawer()"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1L1 9" stroke="#c4b5fd" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="dbody" id="drwB"></div>
+  </div>
+</div>
+
+<script>
+const C={ind:'#534AB7',indl:'#EEEDFE',indm:'#7F77DD',grn:'#1D9E75',grnl:'#E1F5EE',amb:'#BA7517',ambl:'#FAEEDA',red:'#E24B4A',redl:'#FCEBEB',bdr:'#e8e4dc',txt:'#222',mut:'#888',hnt:'#bbb'};
+
+function dimBar(color,label,val,note){
+  return`<div style="margin-bottom:11px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+      <div style="display:flex;align-items:center;gap:5px">
+        <div style="width:6px;height:6px;border-radius:50%;background:${color};flex-shrink:0"></div>
+        <span style="font-size:12px;font-weight:500;color:#222">${label}</span>
+      </div>
+      <span style="font-size:12px;font-weight:500;color:${color}">${val}</span>
+    </div>
+    <div style="height:5px;background:#f5f2ec;border-radius:3px;overflow:hidden;margin-bottom:3px">
+      <div style="height:100%;width:${val}%;background:${color};border-radius:3px"></div>
+    </div>
+    ${note?`<div style="font-size:10px;color:#aaa">${note}</div>`:''}
+  </div>`;
+}
+function detailRow(k,v,vc){return`<div class="drow"><span class="dk">${k}</span><span class="dv" style="color:${vc||'#222'}">${v}</span></div>`}
+function smallBtn(label,bg,color,border,onclick){return`<button style="padding:9px;border-radius:10px;border:.5px solid ${border};background:${bg};color:${color};font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font-sans);width:100%" onclick="${onclick}">${label}</button>`}
+
+const pages=[
+{
+  title:'Dashboard',meta:'Good morning, Arjun',
+  tabs:['Overview','Streak','Heatmap','Signals','AI Insight','Study Hub'],
+  panels:[
+    ()=>`
+      <div class="stat-row">
+        <div class="stat-c"><div class="sv">1,240</div><div class="sl">min studied</div></div>
+        <div class="stat-c"><div class="sv">18</div><div class="sl">active days</div></div>
+        <div class="stat-c"><div class="sv">76%</div><div class="sl">avg marks</div></div>
+      </div>
+      <div class="card">
+        <div class="sh">This week</div>
+        ${[['Study sessions','5 · 3h 20m avg','#222'],['Focus rate','72%','#534AB7'],['Flashcards reviewed','14 cards','#1D9E75'],['LeetCode submissions','4 problems','#222']].map(r=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:.5px solid #f5f2ec"><span style="font-size:11px;color:#888">${r[0]}</span><span style="font-size:12px;font-weight:500;color:${r[2]}">${r[1]}</span></div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="sh">Trajectory</div>
+        <div style="display:flex;align-items:center;gap:6px;padding:7px 10px;background:#E1F5EE;border-radius:8px;border:.5px solid #9FE1CB">
+          <svg width="11" height="11" viewBox="0 0 12 12"><path d="M2 9l3-3 3 3 4-6" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span style="font-size:11px;color:#0F6E56">Stable — no RED threshold crossing in 30 days</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sh">Placement badge</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l1.6 3.2 3.6.5-2.6 2.5.6 3.6L8 9.6 4.8 11.3l.6-3.6L3 5.2l3.6-.5z" fill="#534AB7"/></svg></div>
+          <div><div style="font-size:13px;font-weight:500;color:#3C3489">Placement Ready</div><div style="font-size:11px;color:#7F77DD;margin-top:2px">Academic GREEN + Skill STRONG · Score 79</div></div>
+        </div>
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Study streak</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#FAEEDA;border-radius:9px;border:.5px solid #FAC775;margin-bottom:12px">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2c0 6-7 8-7 14a7 7 0 0014 0c0-6-7-8-7-14z" fill="#BA7517"/><path d="M12 10c0 3-3 4-3 7a3 3 0 006 0c0-3-3-4-3-7z" fill="#EF9F27"/></svg>
+          <div><div style="font-size:12px;font-weight:500;color:#633806">5-day streak on fire!</div><div style="font-size:10px;color:#854F0B;margin-top:1px">Study today to keep it going</div></div>
+        </div>
+        <div class="sbars">
+          ${['22%','38%','54%','68%','82%','92%','100%'].map((h,i)=>`<div class="sbar" style="height:${h};background:${['#ede9fc','#cfc8f6','#b4abee','#9488e0','#7165cf','#5348b8','#3C3489'][i]}"></div>`).join('')}
+        </div>
+        <div class="sft">
+          <div><div class="sfv">5</div><div class="sfl">day streak</div></div>
+          <div><div class="sfv">72%</div><div class="sfl">focus rate</div></div>
+          <div><div class="sfv">3h 20m</div><div class="sfl">avg session</div></div>
+          <div><div class="sfv">14</div><div class="sfl">flashcards</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sh">Daily sessions</div>
+        ${[['Mon','3h 40m','74%'],['Tue','2h 55m','68%'],['Wed','3h 10m','71%'],['Thu','3h 30m','76%'],['Fri','3h 05m','72%']].map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:.5px solid #f5f2ec"><span style="font-size:11px;color:#888">${s[0]}</span><span style="font-size:12px;color:#534AB7;font-weight:500">${s[1]}</span><span style="font-size:10px;color:#bbb">Focus ${s[2]}</span></div>`).join('')}
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Consistency heatmap — 16 weeks</div>
+        <div class="heatmap" id="hmDash"></div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:9px;justify-content:flex-end">
+          <span style="font-size:9px;color:#bbb">less</span>
+          ${['#f0ede6','#cfc8f6','#a097e6','#6d63cc','#3C3489'].map(c=>`<div style="width:8px;height:8px;border-radius:1px;background:${c}"></div>`).join('')}
+          <span style="font-size:9px;color:#bbb">more</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sh">Subject marks</div>
+        ${[['Data Structures',84,'#1D9E75'],['OS',76,'#1D9E75'],['DBMS',61,'#BA7517'],['Networks',70,'#1D9E75'],['SE',78,'#1D9E75']].map(x=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><span style="font-size:11px;color:#888;width:100px;flex-shrink:0">${x[0]}</span><div style="flex:1;height:4px;background:#f5f2ec;border-radius:2px;overflow:hidden"><div style="height:100%;width:${x[1]}%;background:${x[2]};border-radius:2px"></div></div><span style="font-size:10px;color:#bbb;width:22px;text-align:right">${x[1]}</span></div>`).join('')}
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Neglect signals</div>
+        ${[['DBMS','Not studied in 11 days','#E24B4A','#FCEBEB','#f7c1c1','#A32D2D','#791F1F'],['Networks','Not studied in 6 days','#BA7517','#FAEEDA','#FAC775','#633806','#854F0B'],['Software Engg','Not studied in 4 days','#bbb','#f9f8f5','#e8e4dc','#888','#888']].map(n=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:${n[3]};border:.5px solid ${n[4]};border-radius:9px;margin-bottom:7px"><div style="width:6px;height:6px;border-radius:50%;background:${n[2]};flex-shrink:0"></div><div><div style="font-size:12px;font-weight:500;color:${n[5]}">${n[0]}</div><div style="font-size:10px;color:${n[6]};margin-top:1px">${n[1]}</div></div><button style="margin-left:auto;font-size:10px;padding:3px 9px;border-radius:20px;border:.5px solid ${n[4]};background:#fff;color:${n[5]};cursor:pointer;font-family:var(--font-sans)">Study</button></div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="sh">Active flags <span class="pill" style="background:#FCEBEB;color:#A32D2D">2</span></div>
+        ${[['#E24B4A','LMS activity below threshold — 2 weeks','Flagged Mar 18 · Contest pending','#BA7517'],['#BA7517','Study session frequency dropped 30%','Flagged Mar 19 · No contest yet','#bbb']].map(f=>`<div style="display:flex;gap:7px;padding:7px 0;border-bottom:.5px solid #f5f2ec"><div style="width:6px;height:6px;border-radius:50%;background:${f[0]};flex-shrink:0;margin-top:4px"></div><div><div style="font-size:12px;color:#222">${f[1]}</div><div style="font-size:10px;color:${f[3]};margin-top:2px">${f[2]}</div></div></div>`).join('')}
+        <button style="width:100%;margin-top:8px;padding:8px;border-radius:9px;border:.5px solid #534AB7;color:#534AB7;font-size:11px;font-weight:500;background:transparent;cursor:pointer;font-family:var(--font-sans)" onclick="openDrawer('contest')">Contest a flag →</button>
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Weekly AI narrative</div>
+        <div style="border-left:2px solid #c4b5fd;padding:8px 12px">
+          <div style="font-size:12px;color:#444;line-height:1.7;font-style:italic">Academic standing is stable this week. LMS engagement has dipped — 3 modules remain unopened since Monday. Skill score climbed 2 points driven by LeetCode activity. Trajectory is positive if the LMS gap is addressed by Friday.</div>
+          <div style="font-size:10px;color:#bbb;margin-top:5px">Generated Monday, Mar 20 · 6:00 AM · Gemini 2.0 Flash</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sh">4-week trajectory</div>
+        <svg width="100%" height="56" viewBox="0 0 300 56">
+          <polyline points="10,48 75,40 150,33 225,26 290,20" fill="none" stroke="#a78bfa" stroke-width="2" stroke-dasharray="4,3"/>
+          <line x1="10" y1="10" x2="290" y2="10" stroke="#E24B4A" stroke-width="1" stroke-dasharray="3,4" opacity=".35"/>
+          <text x="240" y="8" font-size="8" fill="#E24B4A" opacity=".6">RED threshold</text>
+          <circle cx="290" cy="20" r="3.5" fill="#a78bfa"/>
+          <text x="8" y="54" font-size="8" fill="#bbb">Wk1</text><text x="68" y="54" font-size="8" fill="#bbb">Wk2</text><text x="143" y="54" font-size="8" fill="#bbb">Wk3</text><text x="218" y="54" font-size="8" fill="#bbb">Wk4</text>
+        </svg>
+        <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:#E1F5EE;border-radius:8px;margin-top:6px;border:.5px solid #9FE1CB">
+          <svg width="11" height="11" viewBox="0 0 12 12"><path d="M2 9l3-3 3 3 4-6" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span style="font-size:11px;color:#0F6E56">Stable — no crossing predicted in 30 days</span>
+        </div>
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Study timer</div>
+        <div style="padding:14px 0 10px">
+          <div class="timer-big" id="tDisp" style="color:#534AB7">25:00</div>
+          <div class="timer-phase" id="tPhase" style="color:#7F77DD">Ready to study</div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:8px;margin-bottom:14px">
+          <button class="tbtn pri" id="tStart" onclick="TG()">Start session</button>
+          <button class="tbtn amb" id="tBreak" style="display:none" onclick="TB()">Take break</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+          <div><div style="font-size:14px;font-weight:500;color:#534AB7" id="tStudy">0:00</div><div style="font-size:10px;color:#bbb">study time</div></div>
+          <div><div style="font-size:14px;font-weight:500;color:#BA7517" id="tBreakT">0:00</div><div style="font-size:10px;color:#bbb">break time</div></div>
+          <div><div style="font-size:14px;font-weight:500;color:#888" id="tBreaks">0</div><div style="font-size:10px;color:#bbb">breaks</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sh">Recent sessions</div>
+        ${[['Mar 19','Data Structures','3h 40m','74%'],['Mar 18','OS Concepts','2h 55m','68%'],['Mar 17','DBMS','3h 10m','71%']].map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:.5px solid #f5f2ec"><div><div style="font-size:12px;font-weight:500;color:#222">${s[1]}</div><div style="font-size:10px;color:#bbb">${s[0]}</div></div><div style="text-align:right"><div style="font-size:12px;color:#534AB7;font-weight:500">${s[2]}</div><div style="font-size:10px;color:#bbb">Focus ${s[3]}</div></div></div>`).join('')}
+      </div>`
+  ]
+},
+{
+  title:'Academic Health',meta:'Risk score & interventions',
+  tabs:['Risk score','Dimensions','Trajectory','Flags','Interventions'],
+  panels:[
+    ()=>`
+      <div class="card" style="text-align:center">
+        <div class="sh" style="justify-content:center">Risk score</div>
+        <svg width="150" height="85" viewBox="0 0 150 85" style="display:block;margin:0 auto">
+          <path d="M18 78 A57 57 0 0 1 132 78" fill="none" stroke="#f0ede6" stroke-width="12" stroke-linecap="round"/>
+          <path d="M18 78 A57 57 0 0 1 132 78" fill="none" stroke="#1D9E75" stroke-width="12" stroke-linecap="round" stroke-dasharray="179.1" stroke-dashoffset="125"/>
+          <text x="75" y="68" text-anchor="middle" font-size="28" font-weight="500" fill="#1D9E75">22</text>
+          <text x="75" y="82" text-anchor="middle" font-size="10" fill="#888">risk score</text>
+        </svg>
+        <div style="display:inline-flex;align-items:center;gap:5px;background:#E1F5EE;border-radius:20px;padding:4px 12px;margin:6px 0 10px">
+          <div style="width:6px;height:6px;border-radius:50%;background:#1D9E75"></div>
+          <span style="font-size:11px;color:#0F6E56;font-weight:500">GREEN — Low Risk</span>
+        </div>
+        <div style="font-size:12px;color:#444;line-height:1.65;font-style:italic;border-left:2px solid #1D9E75;padding:8px 12px;text-align:left">Stable performance. LMS engagement is the primary concern — address before next recalculation.</div>
+      </div>
+      <div class="card">
+        <div class="sh">AI explanation</div>
+        <div style="font-size:12px;color:#444;line-height:1.7">Risk score of 22 reflects strong attendance and behaviour, moderate marks and flashcard activity, and weak LMS engagement. The weighted composite puts you firmly in GREEN, but LMS inactivity is worth monitoring.</div>
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Six dimensions</div>
+        ${[['#1D9E75','Attendance',82,'Present 27/30 days'],['#1D9E75','Marks',76,'Avg 76% across subjects'],['#BA7517','Study activity',68,'Sessions down 30% this week'],['#E24B4A','LMS activity',55,'3 modules unopened since Mon'],['#1D9E75','Flashcards',70,'8/10 topics reviewed'],['#534AB7','Behaviour',88,'No flags this month']].map(d=>dimBar(d[0],d[1],d[2],d[3])).join('')}
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">4-week risk trajectory</div>
+        <svg width="100%" height="70" viewBox="0 0 300 70">
+          <polyline points="10,58 75,50 150,44 225,37 290,30" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-dasharray="5,3"/>
+          <line x1="10" y1="15" x2="290" y2="15" stroke="#E24B4A" stroke-width="1.2" stroke-dasharray="4,4" opacity=".4"/>
+          <text x="220" y="12" font-size="9" fill="#E24B4A" opacity=".6">RED threshold</text>
+          <circle cx="10" cy="58" r="4" fill="#7F77DD"/>
+          <circle cx="290" cy="30" r="4" fill="#a78bfa"/>
+          <text x="8" y="68" font-size="8" fill="#bbb">Wk1</text><text x="68" y="68" font-size="8" fill="#bbb">Wk2</text><text x="143" y="68" font-size="8" fill="#bbb">Wk3</text><text x="218" y="68" font-size="8" fill="#bbb">Wk4</text>
+        </svg>
+        <div style="display:flex;align-items:center;gap:6px;padding:7px 10px;background:#E1F5EE;border-radius:8px;margin-top:4px;border:.5px solid #9FE1CB">
+          <svg width="11" height="11" viewBox="0 0 12 12"><path d="M2 9l3-3 3 3 4-6" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span style="font-size:11px;color:#0F6E56">Stable — no RED crossing predicted in 30 days</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sh">Trajectory note</div>
+        <div style="font-size:12px;color:#444;line-height:1.7">At current trend, risk score is improving week-over-week. Addressing LMS activity and maintaining study sessions will continue this downward trajectory. No intervention threshold expected to be crossed.</div>
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Active flags <span class="pill" style="background:#FCEBEB;color:#A32D2D">2</span></div>
+        ${[['#E24B4A','#FCEBEB','#f7c1c1','#A32D2D','LMS activity below threshold','Flagged Mar 18','Contest pending','#BA7517'],['#BA7517','#FAEEDA','#FAC775','#633806','Study session frequency dropped 30%','Flagged Mar 19','No contest yet','#bbb']].map(f=>`<div style="padding:10px 12px;background:${f[1]};border:.5px solid ${f[2]};border-radius:10px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><div style="width:6px;height:6px;border-radius:50%;background:${f[0]}"></div><span style="font-size:12px;font-weight:500;color:${f[3]}">${f[4]}</span></div><div style="font-size:10px;color:${f[7]}">${f[5]} · ${f[6]}</div></div>`).join('')}
+        <button style="width:100%;padding:9px;border-radius:10px;border:.5px solid #534AB7;color:#534AB7;font-size:11px;font-weight:500;background:transparent;cursor:pointer;font-family:var(--font-sans)" onclick="openDrawer('contest')">Contest a flag →</button>
+      </div>
+      <div class="card">
+        <div class="sh">Contest history</div>
+        <div style="padding:9px 11px;background:#fff;border:.5px solid #e8e4dc;border-radius:9px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;font-weight:500;color:#222">LMS activity flag</span><span class="pill" style="background:#FAEEDA;color:#633806">Reviewed</span></div>
+          <div style="font-size:11px;color:#888">Advisor: "Medical leave noted. Flag weight reduced."</div>
+        </div>
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Active interventions</div>
+        ${[['Complete LMS modules','#FCEBEB','#f7c1c1','#A32D2D','High','3 modules pending since Monday. Advisor: Mrs. Priya','Due: Mar 22'],['Resume daily sessions','#FAEEDA','#FAC775','#633806','Medium','Maintain at least 1 session/day to protect streak','Ongoing']].map(i=>`<div style="background:#fff;border:.5px solid #e8e4dc;border-radius:10px;padding:10px 12px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;font-weight:500;color:#222">${i[0]}</span><span class="pill" style="background:${i[1]};color:${i[3]}">${i[4]}</span></div><div style="font-size:11px;color:#888;margin-bottom:3px;line-height:1.5">${i[5]}</div><div style="font-size:10px;color:#bbb">${i[6]}</div></div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="sh">Profile view log</div>
+        ${[['PR','Advisor Priya','Class Advisor','Today at 2:14 PM'],['SK','Prof. S. Kumar','Subject Teacher','Yesterday at 10:30 AM'],['HN','HoD Nair','Head of Dept','Mar 18 at 9:05 AM']].map(l=>`<div style="display:flex;gap:9px;padding:7px 0;border-bottom:.5px solid #f5f2ec"><div style="width:28px;height:28px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#534AB7;flex-shrink:0">${l[0]}</div><div><div style="font-size:12px;color:#222">${l[1]} <span style="color:#bbb">(${l[2]})</span></div><div style="font-size:10px;color:#bbb;margin-top:1px">${l[3]}</div></div></div>`).join('')}
+      </div>`
+  ]
+},
+{
+  title:'Skill Profile',meta:'Coding platforms & placement',
+  tabs:['Placement','Skill score','LeetCode','Codeforces','GitHub','CodeChef'],
+  panels:[
+    ()=>`
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="width:40px;height:40px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l1.6 3.2 3.6.5-2.6 2.5.6 3.6L8 9.6 4.8 11.3l.6-3.6L3 5.2l3.6-.5z" fill="#534AB7"/></svg></div>
+          <div><div style="font-size:14px;font-weight:500;color:#3C3489">Placement Ready</div><div style="font-size:11px;color:#7F77DD;margin-top:2px">Academic GREEN + Skill STRONG</div></div>
+        </div>
+        ${[['Skill (60%)',74,'#1D9E75'],['Academic (40%)',78,'#534AB7']].map(r=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:#555">${r[0]}</span><span style="font-size:12px;color:${r[2]};font-weight:500">${r[1]}%</span></div><div style="height:5px;background:#f5f2ec;border-radius:3px;overflow:hidden"><div style="height:100%;width:${r[1]}%;background:${r[2]};border-radius:3px"></div></div></div>`).join('')}
+        <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:.5px solid #f0ede6;margin-top:4px"><span style="font-size:11px;color:#888">Placement score</span><span style="font-size:20px;font-weight:500;color:#222">79<span style="font-size:11px;color:#bbb"> / 100</span></span></div>
+      </div>
+      <div class="card">
+        <div class="sh">Department standing</div>
+        ${[['Your rank in CSE','#18 of 120','#222'],['Dept avg','61','#222'],['Above avg by','+18 pts','#1D9E75'],['Top 10% threshold','85','#222']].map(r=>detailRow(r[0],r[1],r[2])).join('')}
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Skill health — 74 · Strong</div>
+        ${[['#1D9E75','Activity freq',78,'Consistent submissions across platforms'],['#1D9E75','Rating traj.',72,'Upward trend in last 4 weeks'],['#BA7517','Contests',65,'3 of last 6 rounds participated'],['#BA7517','Problem depth',58,'Medium/Hard ratio needs improvement']].map(d=>dimBar(d[0],d[1],d[2],d[3])).join('')}
+      </div>
+      <div class="card">
+        <div class="sh">Action items</div>
+        ${['Attempt 2 hard LeetCode problems this week','Participate in next Codeforces round (Mar 23)','Improve medium/hard ratio for problem depth score'].map(a=>`<div style="display:flex;gap:7px;padding:6px 0;border-bottom:.5px solid #f5f2ec"><div style="width:6px;height:6px;border-radius:50%;background:#534AB7;flex-shrink:0;margin-top:4px"></div><div style="font-size:12px;color:#444;line-height:1.5">${a}</div></div>`).join('')}
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+          <div style="width:30px;height:30px;border-radius:7px;background:#fef3f3;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#E24B4A;border:.5px solid #f7c1c1">LC</div>
+          <div><div style="font-size:13px;font-weight:500;color:#222">LeetCode</div><div style="font-size:11px;color:#bbb">@arjun_k · Rank #182,440</div></div>
+          <span class="pill" style="background:#E1F5EE;color:#0F6E56;margin-left:auto">Active</span>
+        </div>
+        <svg width="100%" height="80" viewBox="0 0 220 80">
+          <circle cx="42" cy="40" r="32" fill="none" stroke="#f5f2ec" stroke-width="12"/>
+          <circle cx="42" cy="40" r="32" fill="none" stroke="#1D9E75" stroke-width="12" stroke-dasharray="201.1" stroke-dashoffset="120" transform="rotate(-90 42 42)"/>
+          <circle cx="42" cy="40" r="32" fill="none" stroke="#BA7517" stroke-width="12" stroke-dasharray="201.1" stroke-dashoffset="60" stroke-linecap="round" transform="rotate(102 42 42)"/>
+          <text x="42" y="36" text-anchor="middle" font-size="14" font-weight="500" fill="#222">142</text>
+          <text x="42" y="49" text-anchor="middle" font-size="9" fill="#bbb">solved</text>
+          <text x="100" y="22" font-size="11" fill="#1D9E75">Easy 68</text>
+          <text x="100" y="38" font-size="11" fill="#BA7517">Med 58</text>
+          <text x="100" y="54" font-size="11" fill="#E24B4A">Hard 16</text>
+          <text x="168" y="22" font-size="9" fill="#888">Accept</text>
+          <text x="168" y="35" font-size="13" font-weight="500" fill="#222">68%</text>
+          <text x="168" y="52" font-size="9" fill="#888">Streak</text>
+          <text x="168" y="65" font-size="13" font-weight="500" fill="#534AB7">12d</text>
+        </svg>
+      </div>
+      <div class="card">
+        <div class="sh">Stats</div>
+        ${[['Total solved','142'],['Acceptance rate','68%'],['Global rank','#182,440'],['Current streak','12 days'],['Contests','8']].map(r=>detailRow(r[0],r[1],'#222')).join('')}
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+          <div style="width:30px;height:30px;border-radius:7px;background:#e6f1fb;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#185FA5;border:.5px solid #B5D4F4">CF</div>
+          <div><div style="font-size:13px;font-weight:500;color:#222">Codeforces</div><div style="font-size:11px;color:#bbb">@arjun_k99 · Specialist</div></div>
+          <span class="pill" style="background:#e6f1fb;color:#185FA5;margin-left:auto">1480</span>
+        </div>
+        <svg width="100%" height="60" viewBox="0 0 300 60">
+          ${[35,50,45,60,55,70,62,75].map((h,i)=>`<rect x="${i*36}" y="${60-h}" width="28" height="${h}" rx="2" fill="${i===7?'#185FA5':'#85B7EB'}"/>`).join('')}
+          <text x="0" y="58" font-size="8" fill="#bbb">8 contests</text>
+          <text x="220" y="58" font-size="8" fill="#185FA5">peak: 1520</text>
+        </svg>
+      </div>
+      <div class="card">
+        <div class="sh">Stats</div>
+        ${[['Rating','1480'],['Rank title','Specialist'],['Max rating','1520'],['Contests','24'],['Global rank','#341,200']].map(r=>detailRow(r[0],r[1],'#222')).join('')}
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px">
+          <div style="width:30px;height:30px;border-radius:7px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#333;border:.5px solid #ddd">GH</div>
+          <div><div style="font-size:13px;font-weight:500;color:#222">GitHub</div><div style="font-size:11px;color:#bbb">@arjun-krishnan · 38 this month</div></div>
+        </div>
+        <div class="heatmap" id="hmGH" style="margin-bottom:10px"></div>
+        ${[['JavaScript',65,'#EF9F27'],['Python',48,'#378ADD'],['C++',32,'#534AB7']].map(l=>`<div style="margin-bottom:7px"><div style="font-size:10px;color:#bbb;margin-bottom:3px">${l[0]}</div><div style="height:4px;background:#f5f2ec;border-radius:2px;overflow:hidden"><div style="height:100%;width:${l[1]}%;background:${l[2]};border-radius:2px"></div></div></div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="sh">Stats</div>
+        ${[['Public repos','12'],['Total contributions','284'],['Streak','8 days'],['This month','38 commits']].map(r=>detailRow(r[0],r[1],'#222')).join('')}
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px">
+          <div style="width:30px;height:30px;border-radius:7px;background:#FAEEDA;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#633806;border:.5px solid #FAC775">CC</div>
+          <div><div style="font-size:13px;font-weight:500;color:#222">CodeChef</div><div style="font-size:11px;color:#bbb">@arjunk22 · Rating 1620</div></div>
+          <div style="display:flex;gap:2px;margin-left:auto">${[1,2,3].map(()=>`<svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1l1.2 2.4 2.8.4-2 2 .5 2.8L6 7.2 3.5 8.6 4 5.8 2 3.8l2.8-.4z" fill="#BA7517"/></svg>`).join('')}${[1,2].map(()=>`<svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1l1.2 2.4 2.8.4-2 2 .5 2.8L6 7.2 3.5 8.6 4 5.8 2 3.8l2.8-.4z" fill="#f0ede6"/></svg>`).join('')}</div>
+        </div>
+        <div style="margin-bottom:6px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:#888">Progress to 4-star</span><span style="font-size:11px;color:#BA7517;font-weight:500">1620 / 1800</span></div>
+          <div style="height:6px;background:#f5f2ec;border-radius:3px;overflow:hidden"><div style="height:100%;width:62%;background:#BA7517;border-radius:3px"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sh">Stats</div>
+        ${[['Rating','1620'],['Star level','3-star'],['Highest rating','1648'],['Contests','18'],['Progress to 4-star','1620 / 1800']].map(r=>detailRow(r[0],r[1],'#222')).join('')}
+      </div>`
+  ]
+},
+{
+  title:'Study Hub',meta:'Timer · Subjects · Tasks',
+  tabs:['Timer','Subjects','Tasks','Flashcards','Notes'],
+  panels:[
+    ()=>`
+      <div class="card">
+        <div class="sh">Study timer</div>
+        <div style="padding:14px 0 10px">
+          <div class="timer-big" id="tDisp2" style="color:#534AB7">25:00</div>
+          <div class="timer-phase" id="tPhase2" style="color:#7F77DD">Ready to study</div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:8px;margin-bottom:14px">
+          <button class="tbtn pri" id="tStart2" onclick="TG2()">Start session</button>
+          <button class="tbtn amb" id="tBreak2" style="display:none" onclick="TB2()">Take break</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+          <div><div style="font-size:14px;font-weight:500;color:#534AB7" id="tStudy2">0:00</div><div style="font-size:10px;color:#bbb">study time</div></div>
+          <div><div style="font-size:14px;font-weight:500;color:#BA7517" id="tBreakT2">0:00</div><div style="font-size:10px;color:#bbb">break time</div></div>
+          <div><div style="font-size:14px;font-weight:500;color:#888" id="tBreaks2">0</div><div style="font-size:10px;color:#bbb">breaks</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sh">Recent sessions</div>
+        ${[['Mar 19','Data Structures','3h 40m','74%'],['Mar 18','OS Concepts','2h 55m','68%'],['Mar 17','DBMS','3h 10m','71%']].map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:.5px solid #f5f2ec"><div><div style="font-size:12px;font-weight:500;color:#222">${s[1]}</div><div style="font-size:10px;color:#bbb">${s[0]}</div></div><div style="text-align:right"><div style="font-size:12px;color:#534AB7;font-weight:500">${s[2]}</div><div style="font-size:10px;color:#bbb">Focus ${s[3]}</div></div></div>`).join('')}
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Tier 1 — Core subjects</div>
+        ${['Data Structures & Algo','Operating Systems','DBMS','Computer Networks','Software Engineering'].map(s=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f9f8f5;border-radius:9px;margin-bottom:6px;border:.5px solid #e8e4dc"><svg width="11" height="11" viewBox="0 0 12 12"><rect x="3.5" y="5" width="5" height="6" rx="1" stroke="#bbb" stroke-width="1.2"/><path d="M4.5 5V4a1.5 1.5 0 013 0v1" stroke="#bbb" stroke-width="1.2"/></svg><span style="font-size:12px;color:#222">${s}</span><span style="font-size:10px;color:#bbb;margin-left:auto">Set by advisor</span></div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="sh">Tier 2 — Personal</div>
+        ${['Web Development','Competitive Programming','Machine Learning'].map(s=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f9f8f5;border-radius:9px;margin-bottom:6px;border:.5px solid #e8e4dc"><span style="font-size:12px;color:#222">${s}</span><span style="font-size:16px;color:#E24B4A;margin-left:auto;cursor:pointer;line-height:1">×</span></div>`).join('')}
+        <button style="width:100%;padding:8px;border-radius:9px;border:.5px solid #534AB7;color:#534AB7;font-size:11px;font-weight:500;background:transparent;cursor:pointer;font-family:var(--font-sans);margin-top:2px">+ Add subject</button>
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Tasks</div>
+        ${[[true,'Complete LMS Module 4 — Relational Algebra'],[true,'Solve 5 LeetCode medium problems'],[false,'Revise OS scheduling algorithms'],[false,'Submit CN assignment before Friday'],[false,'Review weak flashcards in DBMS']].map(t=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:#f9f8f5;border-radius:9px;margin-bottom:6px;border:.5px solid ${t[0]?'#9FE1CB':'#e8e4dc'}"><div style="width:16px;height:16px;border-radius:4px;border:.5px solid ${t[0]?'#1D9E75':'#e8e4dc'};background:${t[0]?'#E1F5EE':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0">${t[0]?`<svg width="10" height="10" viewBox="0 0 10 10"><path d="M1.5 5l2.5 2.5 5-5" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`:''}</div><span style="font-size:12px;color:${t[0]?'#bbb':'#222'};${t[0]?'text-decoration:line-through':''}">${t[1]}</span></div>`).join('')}
+      </div>`,
+    ()=>`
+      <div style="font-size:11px;color:#888;text-align:center;margin-bottom:8px;padding-top:4px">Card 1 of 12 · Data Structures · WEAK</div>
+      <div class="fc-wrap" onclick="document.getElementById('fcS').classList.toggle('flip')">
+        <div class="fc-inner" id="fcS">
+          <div class="fc-face fc-front"><div style="font-size:13px;color:#3C3489;font-weight:500;line-height:1.5">What is the time complexity of building a heap using heapify-down?</div></div>
+          <div class="fc-face fc-back"><div style="font-size:12px;color:#0F6E56;line-height:1.6">O(n) — Building a heap from an unsorted array using repeated heapify-down is O(n), not O(n log n) as commonly assumed.</div></div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:#bbb;margin-bottom:10px">Tap card to reveal answer</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <button style="flex:1;padding:8px;border-radius:10px;border:.5px solid #f7c1c1;background:#FCEBEB;color:#A32D2D;font-size:11px;font-weight:500;cursor:pointer;font-family:var(--font-sans)">Weak</button>
+        <button style="flex:1;padding:8px;border-radius:10px;border:.5px solid #FAC775;background:#FAEEDA;color:#633806;font-size:11px;font-weight:500;cursor:pointer;font-family:var(--font-sans)">Moderate</button>
+        <button style="flex:1;padding:8px;border-radius:10px;border:.5px solid #9FE1CB;background:#E1F5EE;color:#0F6E56;font-size:11px;font-weight:500;cursor:pointer;font-family:var(--font-sans)">Strong</button>
+      </div>
+      <div class="card">
+        <div class="sh">Subject progress</div>
+        ${[['Data Structures',4,3,5],['OS',2,4,6],['DBMS',3,2,2]].map(x=>`<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:#222">${x[0]}</span><span style="font-size:10px;color:#bbb">${x[1]}W · ${x[2]}M · ${x[3]}S</span></div><div style="display:flex;height:5px;border-radius:3px;overflow:hidden"><div style="flex:${x[1]};background:#E24B4A"></div><div style="flex:${x[2]};background:#BA7517"></div><div style="flex:${x[3]};background:#1D9E75"></div></div></div>`).join('')}
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Smart notes</div>
+        <textarea style="width:100%;min-height:75px;border:.5px solid #e8e4dc;border-radius:9px;padding:9px;font-size:12px;font-family:var(--font-sans);background:#f9f8f5;color:#222;resize:none;margin-bottom:9px" placeholder="Paste notes or upload a file…">A heap is a complete binary tree. Building is O(n). Heapsort is O(n log n). Priority queues use heaps.</textarea>
+        <div style="display:flex;gap:6px;margin-bottom:9px">
+          <button class="mbtn active" id="nm0" onclick="setNM(0)">Summarize</button>
+          <button class="mbtn" id="nm1" onclick="setNM(1)">Topics</button>
+          <button class="mbtn" id="nm2" onclick="setNM(2)">Exam Focus</button>
+        </div>
+        <button style="width:100%;padding:9px;border-radius:9px;background:#534AB7;color:#fff;border:none;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font-sans)">Generate with AI →</button>
+      </div>
+      <div class="card">
+        <div class="sh">Generated flashcards <span class="sha">Save all →</span></div>
+        ${[['What is the time complexity of building a heap?','O(n) using heapify-down'],['Primary use case for heaps?','Priority queues'],['Heap property definition?','Parent ≥ children (max) or ≤ (min)']].map((f,i)=>`<div style="background:#f9f8f5;border:.5px solid #ede9e0;border-radius:9px;padding:9px 11px;margin-bottom:6px"><div style="font-size:10px;font-weight:500;color:#534AB7;margin-bottom:3px">Q${i+1}</div><div style="font-size:12px;color:#222;margin-bottom:3px">${f[0]}</div><div style="font-size:11px;color:#888;font-style:italic">${f[1]}</div></div>`).join('')}
+      </div>`
+  ]
+},
+{
+  title:'Revision Queue',meta:'Flashcard practice',
+  tabs:['Queue','By subject'],
+  panels:[
+    ()=>`
+      <div style="display:flex;gap:5px;padding:4px 0 8px;flex-wrap:wrap">
+        ${['All','Data Structures','OS','DBMS','Networks'].map((s,i)=>`<span style="font-size:11px;padding:4px 11px;border-radius:20px;border:.5px solid ${i===0?'#534AB7':'#e8e4dc'};background:${i===0?'#EEEDFE':'#fff'};color:${i===0?'#534AB7':'#888'};cursor:pointer">${s}</span>`).join('')}
+      </div>
+      <div style="font-size:11px;color:#888;margin-bottom:10px">12 cards due · 4 weak · 5 moderate · 3 strong</div>
+      <div class="fc-wrap" onclick="document.getElementById('fcQ').classList.toggle('flip')">
+        <div class="fc-inner" id="fcQ">
+          <div class="fc-face fc-front"><div style="font-size:13px;color:#3C3489;font-weight:500;line-height:1.5">What is the time complexity of building a heap using heapify-down?</div></div>
+          <div class="fc-face fc-back"><div style="font-size:12px;color:#0F6E56;line-height:1.6">O(n) — heapify-down applied bottom-up processes each node in amortized O(1) time.</div></div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:#bbb;margin-bottom:10px">Tap card to flip</div>
+      <div style="display:flex;gap:7px;margin-bottom:10px">
+        <button style="flex:1;padding:8px;border-radius:10px;border:.5px solid #f7c1c1;background:#FCEBEB;color:#A32D2D;font-size:11px;font-weight:500;cursor:pointer;font-family:var(--font-sans)">Weak</button>
+        <button style="flex:1;padding:8px;border-radius:10px;border:.5px solid #FAC775;background:#FAEEDA;color:#633806;font-size:11px;font-weight:500;cursor:pointer;font-family:var(--font-sans)">Moderate</button>
+        <button style="flex:1;padding:8px;border-radius:10px;border:.5px solid #9FE1CB;background:#E1F5EE;color:#0F6E56;font-size:11px;font-weight:500;cursor:pointer;font-family:var(--font-sans)">Strong</button>
+      </div>`,
+    ()=>`
+      <div class="card">
+        <div class="sh">Progress by subject</div>
+        ${[['Data Structures',4,3,5],['OS',2,4,6],['DBMS',3,2,2],['Networks',1,3,4]].map(x=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:#222">${x[0]}</span><span style="font-size:10px;color:#bbb">${x[1]} weak · ${x[2]} mod · ${x[3]} strong</span></div><div style="display:flex;height:5px;border-radius:3px;overflow:hidden"><div style="flex:${x[1]};background:#E24B4A"></div><div style="flex:${x[2]};background:#BA7517"></div><div style="flex:${x[3]};background:#1D9E75"></div></div></div>`).join('')}
+      </div>`
+  ]
+}
+];
+
+/* ── NAVIGATION ── */
+let curPage=0,curTab=0;
+function renderPage(pi){
+  const p=pages[pi];
+  document.getElementById('pgTitle').textContent=p.title;
+  document.getElementById('pgMeta').textContent=p.meta;
+  const te=document.getElementById('secTabs'),pe=document.getElementById('panelsWrap');
+  te.innerHTML='';pe.innerHTML='';
+  p.tabs.forEach((t,i)=>{
+    const b=document.createElement('div');b.className='st'+(i===0?' active':'');
+    b.id='t'+i;b.textContent=t;b.onclick=()=>switchTab(i);te.appendChild(b);
+    const panel=document.createElement('div');panel.className='panel'+(i===0?' active':'');
+    panel.id='pan'+i;panel.innerHTML=p.panels[i]();pe.appendChild(panel);
+  });
+  curTab=0;
+  setTimeout(()=>{
+    if(pi===0)makeHeatmap('hmDash',['#f0ede6','#cfc8f6','#a097e6','#6d63cc','#3C3489'],16);
+    if(pi===2)makeHeatmap('hmGH',['#f5f2ec','#C0DD97','#97C459','#639922','#3B6D11'],12);
+  },50);
+}
+function switchTab(n){
+  document.getElementById('t'+curTab).classList.remove('active');
+  document.getElementById('pan'+curTab).classList.remove('active');
+  curTab=n;
+  document.getElementById('t'+n).classList.add('active');
+  document.getElementById('pan'+n).classList.add('active');
+  setTimeout(()=>{
+    if(curPage===0&&n===2)makeHeatmap('hmDash',['#f0ede6','#cfc8f6','#a097e6','#6d63cc','#3C3489'],16);
+    if(curPage===2&&n===4)makeHeatmap('hmGH',['#f5f2ec','#C0DD97','#97C459','#639922','#3B6D11'],12);
+  },50);
+}
+function goPage(n){
+  document.getElementById('bn'+curPage).classList.remove('active');
+  document.getElementById('bn'+curPage).querySelector('.bnl').style.color='';
+  document.getElementById('bn'+curPage).querySelector('.bniw').style.background='';
+  curPage=n;
+  document.getElementById('bn'+n).classList.add('active');
+  document.getElementById('bn'+n).querySelector('.bnl').style.color='var(--ind)';
+  document.getElementById('bn'+n).querySelector('.bniw').style.background='var(--indl)';
+  renderPage(n);closeDrawer();
+}
+
+/* ── HEATMAP ── */
+function makeHeatmap(id,cols,c){
+  const el=document.getElementById(id);if(!el)return;el.innerHTML='';
+  for(let i=0;i<c;i++){
+    const col=document.createElement('div');col.className='hm-col';
+    for(let r=0;r<7;r++){const cell=document.createElement('div');cell.className='hm-cell';cell.style.background=cols[Math.floor(Math.random()*cols.length)];col.appendChild(cell);}
+    el.appendChild(col);
+  }
+}
+
+/* ── TIMERS ── */
+let ts1={iv:null,ss:0,bs:0,br:0,run:false,ob:false,cd:1500};
+let ts2={iv:null,ss:0,bs:0,br:0,run:false,ob:false,cd:1500};
+function fmt(s){return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60}
+function startT(s,dId,phId,stId,btId,brId,startBtnId,breakBtnId){
+  s.run=true;s.ob=false;
+  document.getElementById(startBtnId).textContent='End session';
+  document.getElementById(breakBtnId).style.display='';
+  document.getElementById(phId).textContent='Studying';
+  document.getElementById(phId).style.color='#7F77DD';
+  document.getElementById(dId).style.color='#534AB7';
+  s.iv=setInterval(()=>{
+    if(!s.ob){s.ss++;s.cd=Math.max(0,s.cd-1);}else{s.bs++;}
+    document.getElementById(dId).textContent=fmt(s.cd);
+    document.getElementById(stId).textContent=fmt(s.ss);
+    document.getElementById(btId).textContent=fmt(s.bs);
+  },200);
+}
+function endT(s,dId,phId,stId,btId,brId,startBtnId,breakBtnId){
+  clearInterval(s.iv);s.run=false;s.ob=false;
+  const focus=Math.round(s.ss/(s.ss+s.bs+1)*100);
+  document.getElementById(startBtnId).textContent='Start session';
+  document.getElementById(breakBtnId).style.display='none';
+  document.getElementById(phId).textContent='Ended · Focus: '+focus+'%';
+  document.getElementById(phId).style.color='#7F77DD';
+  document.getElementById(dId).textContent='25:00';
+  document.getElementById(dId).style.color='#534AB7';
+  s.ss=0;s.bs=0;s.br=0;s.cd=1500;
+  document.getElementById(brId).textContent='0';
+}
+function breakT(s,dId,phId,btId,brId,breakBtnId){
+  s.ob=!s.ob;
+  if(s.ob){s.br++;document.getElementById(breakBtnId).textContent='Resume';document.getElementById(phId).textContent='On break';document.getElementById(phId).style.color='#BA7517';document.getElementById(dId).style.color='#BA7517';document.getElementById(brId).textContent=s.br;}
+  else{document.getElementById(breakBtnId).textContent='Take break';document.getElementById(phId).textContent='Studying';document.getElementById(phId).style.color='#7F77DD';document.getElementById(dId).style.color='#534AB7';}
+}
+function TG(){ts1.run?endT(ts1,'tDisp','tPhase','tStudy','tBreakT','tBreaks','tStart','tBreak'):startT(ts1,'tDisp','tPhase','tStudy','tBreakT','tBreaks','tStart','tBreak');}
+function TB(){breakT(ts1,'tDisp','tPhase','tBreakT','tBreaks','tBreak');}
+function TG2(){ts2.run?endT(ts2,'tDisp2','tPhase2','tStudy2','tBreakT2','tBreaks2','tStart2','tBreak2'):startT(ts2,'tDisp2','tPhase2','tStudy2','tBreakT2','tBreaks2','tStart2','tBreak2');}
+function TB2(){breakT(ts2,'tDisp2','tPhase2','tBreakT2','tBreaks2','tBreak2');}
+
+/* ── NOTES MODE ── */
+function setNM(n){[0,1,2].forEach(i=>{const el=document.getElementById('nm'+i);if(el)el.classList.toggle('active',i===n);});}
+
+/* ── DRAWERS ── */
+const drawers={
+  risk:{title:'Risk breakdown',sub:'Score 22 · GREEN · Low risk',body:`
+    <div class="dc"><div class="dct">Dimension details</div>
+    ${[['#1D9E75','Attendance',82,'Present 27/30 days'],['#1D9E75','Marks',76,'Avg 76% across subjects'],['#BA7517','Study activity',68,'Sessions down 30%'],['#E24B4A','LMS activity',55,'3 modules unopened'],['#1D9E75','Flashcards',70,'8/10 topics reviewed'],['#534AB7','Behaviour',88,'No flags this month']].map(d=>`<div style="margin-bottom:11px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><div style="display:flex;align-items:center;gap:5px"><div style="width:6px;height:6px;border-radius:50%;background:${d[0]}"></div><span style="font-size:12px;font-weight:500;color:#222">${d[1]}</span></div><span style="font-size:12px;font-weight:500;color:${d[0]}">${d[2]}</span></div><div style="height:5px;background:#f5f2ec;border-radius:3px;overflow:hidden;margin-bottom:2px"><div style="height:100%;width:${d[2]}%;background:${d[0]};border-radius:3px"></div></div><div style="font-size:10px;color:#aaa">${d[3]}</div></div>`).join('')}</div>
+    <div class="dc"><div class="dct">AI interventions</div>
+    <div style="background:#fff;border:.5px solid #e8e4dc;border-radius:9px;padding:9px;margin-bottom:7px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;font-weight:500;color:#222">Complete LMS modules</span><span style="font-size:10px;padding:2px 7px;border-radius:10px;background:#FCEBEB;color:#A32D2D;font-weight:500">High</span></div><div style="font-size:10px;color:#888">3 pending — complete before Friday</div></div>
+    <div style="background:#fff;border:.5px solid #e8e4dc;border-radius:9px;padding:9px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;font-weight:500;color:#222">Resume daily sessions</span><span style="font-size:10px;padding:2px 7px;border-radius:10px;background:#FAEEDA;color:#633806;font-weight:500">Med</span></div><div style="font-size:10px;color:#888">Target 1 session/day</div></div></div>`},
+  skill:{title:'Skill health',sub:'Score 74 · Strong',body:`
+    <div class="dc"><div class="dct">Platforms</div>
+    ${[['LC','#E24B4A','#fef3f3','#f7c1c1','LeetCode','142 solved · 68% accept'],['CF','#185FA5','#e6f1fb','#B5D4F4','Codeforces','1480 · Specialist'],['CC','#633806','#FAEEDA','#FAC775','CodeChef','3-star · 1620'],['GH','#444','#f5f5f5','#ddd','GitHub','38 contributions']].map(p=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:.5px solid #f0ede6"><div style="width:24px;height:24px;border-radius:6px;background:${p[2]};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:${p[0]};border:.5px solid ${p[3]}">${p[0]}</div><span style="font-size:12px;color:#222">${p[4]}</span><span style="font-size:10px;color:#888;margin-left:auto">${p[5]}</span></div>`).join('')}</div>
+    <div class="dc"><div class="dct">Sub-scores</div>
+    ${[['Activity freq',78,'#1D9E75'],['Rating traj.',72,'#1D9E75'],['Contests',65,'#BA7517'],['Problem depth',58,'#BA7517']].map(d=>`<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:#555">${d[0]}</span><span style="font-size:11px;font-weight:500;color:${d[2]}">${d[1]}</span></div><div style="height:4px;background:#f5f2ec;border-radius:2px;overflow:hidden"><div style="height:100%;width:${d[1]}%;background:${d[2]};border-radius:2px"></div></div></div>`).join('')}</div>`},
+  placement:{title:'Placement profile',sub:'Score 79 · Top 12%',body:`
+    <div class="dc"><div class="dct">Score formula</div>
+    <div class="drow"><span class="dk">Skill × 60%</span><span class="dv" style="color:#1D9E75">74 × 0.6 = 44.4</span></div>
+    <div class="drow"><span class="dk">Academic × 40%</span><span class="dv" style="color:#534AB7">(100−22) × 0.4 = 31.2</span></div>
+    <div class="drow"><span class="dk">Risk offset (STRONG)</span><span class="dv" style="color:#1D9E75">−8 pts</span></div>
+    <div class="drow"><span class="dk">Final score</span><span class="dv" style="font-size:15px;color:#222">79 / 100</span></div></div>
+    <div class="dc"><div class="dct">Department standing</div>
+    <div class="drow"><span class="dk">Rank in CSE</span><span class="dv">&#35;18 of 120</span></div>
+    <div class="drow"><span class="dk">Dept avg</span><span class="dv">61</span></div>
+    <div class="drow"><span class="dk">Above avg by</span><span class="dv" style="color:#1D9E75">+18 pts</span></div>
+    <div class="drow"><span class="dk">Top 10% threshold</span><span class="dv">85</span></div></div>`},
+  contest:{title:'Contest a flag',sub:'Submit your context note',body:`
+    <div class="dc"><div class="dct">Select flag</div>
+    <div style="padding:9px;background:#FCEBEB;border:.5px solid #f7c1c1;border-radius:9px;cursor:pointer;margin-bottom:7px"><div style="font-size:12px;font-weight:500;color:#A32D2D">LMS activity flag</div><div style="font-size:10px;color:#A32D2D;margin-top:1px">Flagged Mar 18</div></div>
+    <div style="padding:9px;background:#fff;border:.5px solid #e8e4dc;border-radius:9px;cursor:pointer"><div style="font-size:12px;font-weight:500;color:#222">Study session flag</div><div style="font-size:10px;color:#aaa;margin-top:1px">Flagged Mar 19</div></div></div>
+    <div class="dc"><div class="dct">Your context note</div>
+    <textarea style="width:100%;min-height:70px;border:.5px solid #e8e4dc;border-radius:8px;padding:8px;font-size:12px;font-family:var(--font-sans);background:#fff;color:#222;resize:none">I was unwell on Mar 16–17 and could not access LMS.</textarea>
+    <button style="width:100%;margin-top:8px;padding:9px;border-radius:9px;background:#534AB7;color:#fff;border:none;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font-sans)">Submit contest →</button></div>`}
+};
+function openDrawer(type){
+  const d=drawers[type];
+  document.getElementById('drwT').textContent=d.title;
+  document.getElementById('drwS').textContent=d.sub;
+  document.getElementById('drwB').innerHTML=d.body;
+  document.getElementById('drw').classList.add('open');
+  document.getElementById('ov').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('drw').classList.remove('open');
+  document.getElementById('ov').classList.remove('open');
+}
+
+renderPage(0);
+</script>
